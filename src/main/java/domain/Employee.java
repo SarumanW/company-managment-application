@@ -1,17 +1,29 @@
 package domain;
 
+import generator.UniqueID;
+
 public class Employee {
     private long ID;
     private String name;
     private String surname;
-    private Department department;
+//    private Department department;
 
-    public Department getDepartment() {
-        return department;
+//    public Department getDepartment() {
+//        return department;
+//    }
+
+//    public void setDepartment(Department department) {
+//        this.department = department;
+//    }
+
+    public Employee(){
+        this.setID(UniqueID.generateID(this));
     }
 
-    public void setDepartment(Department department) {
-        this.department = department;
+    public Employee(String name, String surname){
+        this();
+        this.setName(name);
+        this.setSurname(surname);
     }
 
     public String getName() {
@@ -27,7 +39,7 @@ public class Employee {
     }
 
     public void setSurname(String surname) {
-        this.surname = surname;
+        this.surname = this.surname;
     }
 
     public long getID() {

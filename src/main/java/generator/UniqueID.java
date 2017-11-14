@@ -1,3 +1,5 @@
+package generator;
+
 public class UniqueID {
 
     public static long generateID(Object object){

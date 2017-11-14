@@ -9,5 +9,5 @@ public interface DepartmentDAO {
     public Department findDepartment(int key);
     public boolean updateDepartment(Department department);
     public boolean deleteDepartment(Department department);
-    public List<Department> getAllDepatments();
+    public List<Department> getAllDepartments();
 }
