@@ -6,15 +6,15 @@ public class Employee {
     private long ID;
     private String name;
     private String surname;
-//    private Department department;
+    private Department department;
 
-//    public Department getDepartment() {
-//        return department;
-//    }
+    public Department getDepartment() {
+        return department;
+    }
 
-//    public void setDepartment(Department department) {
-//        this.department = department;
-//    }
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
 
     public Employee(){
         this.setID(UniqueID.generateID(this));
@@ -39,7 +39,7 @@ public class Employee {
     }
 
     public void setSurname(String surname) {
-        this.surname = this.surname;
+        this.surname = surname;
     }
 
     public long getID() {
@@ -48,5 +48,11 @@ public class Employee {
 
     public void setID(long ID) {
         this.ID = ID;
+    }
+
+    @Override
+    public String toString() {
+        String s = ID + " " + name + " " + surname + " " + department.getName();
+        return s;
     }
 }

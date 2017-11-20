@@ -1,11 +1,22 @@
 package domain;
 
+import generator.UniqueID;
+
 import java.util.List;
 
 public class Department {
     private long ID;
     private String name;
     private List<Employee> employees;
+
+    public Department(){
+        this.setID(UniqueID.generateID(this));
+    }
+
+    public Department(String name){
+        this();
+        this.name = name;
+    }
 
     public List<Employee> getEmployees() {
         return employees;
@@ -29,5 +40,15 @@ public class Department {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        String s = ID + " " + name + " employees: \n";
+        for(Employee employee : employees){
+            s+=employee.toString();
+            s+="\n";
+        }
+        return s;
     }
 }

@@ -15,7 +15,6 @@ public class OracleConnection {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
             connection = DriverManager.getConnection(connectionURL, userName, password);
-            System.out.println("We're connected!");
         } catch (ClassNotFoundException e) {
             System.out.println("Oracle driver not found");
             e.printStackTrace();

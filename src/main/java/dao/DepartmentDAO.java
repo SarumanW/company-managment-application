@@ -5,9 +5,9 @@ import domain.Department;
 import java.util.List;
 
 public interface DepartmentDAO {
-    public int insertDepartment();
-    public Department findDepartment(int key);
+    public boolean insertDepartment(Department department);
+    public Department findDepartment(long key);
     public boolean updateDepartment(Department department);
-    public boolean deleteDepartment(Department department);
+    public boolean deleteDepartment(long key);
     public List<Department> getAllDepartments();
 }
