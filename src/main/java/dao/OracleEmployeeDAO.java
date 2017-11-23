@@ -1,5 +1,6 @@
 package dao;
 
+import caching.SingletonCache;
 import connections.OracleConnection;
 import domain.Department;
 import domain.Employee;
@@ -60,8 +61,12 @@ public class OracleEmployeeDAO implements EmployeeDAO {
     }
 
     public Employee findEmployee(long key) {
+        Employee employee = (Employee) SingletonCache.getInstance().get(key);
+
+        if(employee!=null)
+            return employee;
+
         Connection connection = oracleConnection.getConnection();
-        Employee employee = new Employee();
         Department department = new Department();
 
         try {
@@ -101,6 +106,7 @@ public class OracleEmployeeDAO implements EmployeeDAO {
             e.printStackTrace();
         }
 
+        SingletonCache.getInstance().put(key, employee);
         return employee;
     }
 

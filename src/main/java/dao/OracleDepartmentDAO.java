@@ -1,5 +1,6 @@
 package dao;
 
+import caching.SingletonCache;
 import domain.Department;
 import domain.Employee;
 import connections.OracleConnection;
@@ -47,8 +48,11 @@ public class OracleDepartmentDAO implements DepartmentDAO {
     }
 
     public Department findDepartment(long key) {
+        Department department = (Department) SingletonCache.getInstance().get(key);
+        if(department!=null)
+            return department;
+
         Connection connection = oracleConnection.getConnection();
-        Department department = new Department();
         List<Employee> employees = new ArrayList<Employee>();
 
         try {
