@@ -6,6 +6,7 @@ public class Employee {
     private long ID;
     private String name;
     private String surname;
+    private double salary;
     private Department department;
 
     public Department getDepartment() {
@@ -20,10 +21,11 @@ public class Employee {
         this.setID(UniqueID.generateID(this));
     }
 
-    public Employee(String name, String surname){
+    public Employee(String name, String surname, double salary){
         this();
         this.setName(name);
         this.setSurname(surname);
+        this.setSalary(salary);
     }
 
     public String getName() {
@@ -48,6 +50,14 @@ public class Employee {
 
     public void setID(long ID) {
         this.ID = ID;
+    }
+
+    public double getSalary() {
+        return salary;
+    }
+
+    public void setSalary(double salary) {
+        this.salary = salary;
     }
 
     @Override

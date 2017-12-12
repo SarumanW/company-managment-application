@@ -16,10 +16,20 @@ public class OracleEmployeeDAO implements EmployeeDAO {
     private Employee extractEmployeeFromResultSet(ResultSet resultSet) throws SQLException {
         Employee employee = new Employee();
 
-        employee.setID(resultSet.getLong(1));
-        employee.setName(resultSet.getString(2));
-        employee.setSurname(resultSet.getString(3));
-
+        while(resultSet.next()){
+            int i = resultSet.getInt(1);
+            switch (i){
+                case 102:
+                    employee.setName(resultSet.getString(2));
+                    break;
+                case 103:
+                    employee.setSurname(resultSet.getString(2));
+                    break;
+                case 104:
+                    employee.setSalary(resultSet.getDouble(3));
+                    break;
+            }
+        }
         return employee;
     }
 
@@ -73,14 +83,12 @@ public class OracleEmployeeDAO implements EmployeeDAO {
             Statement statement = connection.createStatement();
             Statement departStat = connection.createStatement();
 
-            ResultSet resultSet = statement.executeQuery("select employee.object_id as id, first_name.text_value as name, last_name.text_value as surname\n" +
-                    "from objects employee\n" +
-                    "join params first_name on first_name.OBJECT_ID = employee.OBJECT_ID\n" +
-                    "join params last_name on last_name.object_id = employee.OBJECT_ID\n" +
-                    "where employee.TYPE_ID = (select type_id from types where name = 'Employee')\n" +
-                    "and first_name.ATTRIBUTE_ID in (select attribute_id from attributes where name = 'Name')\n" +
-                    "and last_name.ATTRIBUTE_ID in (select attribute_id from attributes where name = 'Surname')\n" +
-                    "and employee.OBJECT_ID = " + key);
+            ResultSet resultSet = statement.executeQuery("select attr.ATTRIBUTE_ID, p.text_value, p.NUMBER_VALUE\n" +
+                    "from objects o\n" +
+                    "inner join attributes attr on attr.type_id = o.TYPE_ID\n" +
+                    "left join params p on p.ATTRIBUTE_ID = attr.ATTRIBUTE_ID\n" +
+                    "and p.object_id = o.OBJECT_ID\n" +
+                    "where o.object_id = " + key);
 
             ResultSet departSet = departStat.executeQuery("SELECT D.OBJECT_ID" +
                     "   FROM Objects D\n" +
@@ -88,13 +96,11 @@ public class OracleEmployeeDAO implements EmployeeDAO {
                     "    INNER JOIN LINKTYPES LT ON L.LINK_TYPE_ID = LT.LINK_TYPE_ID\n" +
                     "    INNER JOIN OBJECTS E ON L.CHILD_ID = E.OBJECT_ID\n" +
                     "    INNER JOIN TYPES OT ON E.TYPE_ID = OT.TYPE_ID\n" +
-                    "    WHERE OT.NAME = 'Employee'\n" +
-                    "    AND LT.NAME = 'EMPDEP'\n" +
+                    "    WHERE OT.NAME = 'employee'\n" +
+                    "    AND LT.NAME = 'dept-employee'\n" +
                     "    AND E.OBJECT_ID = " + employee.getID());
 
-            while(resultSet.next()){
-                employee = extractEmployeeFromResultSet(resultSet);
-            }
+            employee = extractEmployeeFromResultSet(resultSet);
 
             while(departSet.next()){
                 department = oracleDepartmentDAO.findDepartment(departSet.getLong(1));
@@ -114,9 +120,10 @@ public class OracleEmployeeDAO implements EmployeeDAO {
         Connection connection = oracleConnection.getConnection();
 
         try {
-            PreparedStatement updateName = connection.prepareStatement("update params set text_value = ? where object_id = ? and attribute_id = 1001");
-            PreparedStatement updateSurname = connection.prepareStatement("update params set text_value = ? where object_id = ? and attribute_id = 1002");
-            PreparedStatement updateDepartment = connection.prepareStatement("update links set parent_id = ? where child_id = ? and link_type_id = 21");
+            PreparedStatement updateName = connection.prepareStatement("update params set text_value = ? where object_id = ? and attribute_id = 102");
+            PreparedStatement updateSurname = connection.prepareStatement("update params set text_value = ? where object_id = ? and attribute_id = 103");
+            PreparedStatement updateSalary = connection.prepareStatement("update params set number_value = ? where object_id = ? and attribute_id = 104");
+            PreparedStatement updateDepartment = connection.prepareStatement("update links set parent_id = ? where child_id = ? and link_type_id = 150");
 
             updateName.setString(1, employee.getName());
             updateName.setLong(2, employee.getID());
@@ -127,11 +134,15 @@ public class OracleEmployeeDAO implements EmployeeDAO {
             updateDepartment.setLong(1, employee.getDepartment().getID());
             updateDepartment.setLong(2, employee.getID());
 
+            updateSalary.setDouble(1, employee.getSalary());
+            updateSalary.setLong(1, employee.getID());
+
             int i = updateName.executeUpdate();
             int j = updateSurname.executeUpdate();
             int k = updateDepartment.executeUpdate();
+            int z = updateSalary.executeUpdate();
 
-            if(i==1 && j==1 && k==1)
+            if(i==1 && j==1 && k==1 && z==1)
                 return true;
 
         } catch (SQLException e) {
@@ -170,9 +181,9 @@ public class OracleEmployeeDAO implements EmployeeDAO {
                     "from objects employee\n" +
                     "join params first_name on first_name.OBJECT_ID = employee.OBJECT_ID\n" +
                     "join params last_name on last_name.object_id = employee.OBJECT_ID\n" +
-                    "where employee.TYPE_ID = (select type_id from types where name = 'Employee')\n" +
-                    "and first_name.ATTRIBUTE_ID in (select attribute_id from attributes where name = 'Name')\n" +
-                    "and last_name.ATTRIBUTE_ID in (select attribute_id from attributes where name = 'Surname')");
+                    "where employee.TYPE_ID = (select type_id from types where name = 'employee')\n" +
+                    "and first_name.ATTRIBUTE_ID in (select attribute_id from attributes where name = 'emp_name')\n" +
+                    "and last_name.ATTRIBUTE_ID in (select attribute_id from attributes where name = 'emp_surname')");
 
             while(resultSet.next()){
                 Employee employee = extractEmployeeFromResultSet(resultSet);
@@ -188,8 +199,8 @@ public class OracleEmployeeDAO implements EmployeeDAO {
                         "    INNER JOIN LINKTYPES LT ON L.LINK_TYPE_ID = LT.LINK_TYPE_ID\n" +
                         "    INNER JOIN OBJECTS E ON L.CHILD_ID = E.OBJECT_ID\n" +
                         "    INNER JOIN TYPES OT ON E.TYPE_ID = OT.TYPE_ID\n" +
-                        "    WHERE OT.NAME = 'Employee'\n" +
-                        "    AND LT.NAME = 'EMPDEP'\n" +
+                        "    WHERE OT.NAME = 'employee'\n" +
+                        "    AND LT.NAME = 'dept_employee'\n" +
                         "    AND E.OBJECT_ID = " + employee.getID());
 
                 while(depart.next()){

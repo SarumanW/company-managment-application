@@ -1,9 +1,9 @@
-DROP TABLE TYPES;
-DROP TABLE OBJECTS; 
-DROP TABLE ATTRIBUTES;
-DROP TABLE PARAMS;
 DROP TABLE LINKTYPES;
 DROP TABLE LINKS;
+DROP TABLE PARAMS;
+DROP TABLE ATTRIBUTES;
+DROP TABLE OBJECTS; 
+DROP TABLE TYPES;
 
 CREATE TABLE TYPES
     (type_id number(10) not null,
@@ -83,7 +83,7 @@ INSERT INTO PARAMS (text_value, number_value, date_value, object_id, attribute_i
 INSERT INTO PARAMS (text_value, number_value, date_value, object_id, attribute_id) VALUES (null, null, to_date('21-10-2017', 'dd-mm-yyyy'), 17, 112);
 INSERT INTO PARAMS (text_value, number_value, date_value, object_id, attribute_id) VALUES ('Creating Naming', null, null, 18, 113);
 INSERT INTO PARAMS (text_value, number_value, date_value, object_id, attribute_id) VALUES ('Create Name', null, null, 19, 114);
-INSERT INTO PARAMS (text_value, number_value, date_value, object_id, attribute_id) VALUES (null, null, to_date('30', 'hh'), 19, 115);
+INSERT INTO PARAMS (text_value, number_value, date_value, object_id, attribute_id) VALUES (null, 30, null, 19, 115);
 
 
 CREATE TABLE LINKTYPES
