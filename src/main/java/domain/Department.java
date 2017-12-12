@@ -2,6 +2,7 @@ package domain;
 
 import generator.UniqueID;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Department {
@@ -11,6 +12,7 @@ public class Department {
 
     public Department(){
         this.setID(UniqueID.generateID(this));
+        employees = new ArrayList<Employee>();
     }
 
     public Department(String name){

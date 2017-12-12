@@ -15,18 +15,19 @@ public class OracleEmployeeDAO implements EmployeeDAO {
 
     private Employee extractEmployeeFromResultSet(ResultSet resultSet) throws SQLException {
         Employee employee = new Employee();
+        employee.setID(resultSet.getLong(2));
 
         while(resultSet.next()){
             int i = resultSet.getInt(1);
             switch (i){
                 case 102:
-                    employee.setName(resultSet.getString(2));
+                    employee.setName(resultSet.getString(3));
                     break;
                 case 103:
-                    employee.setSurname(resultSet.getString(2));
+                    employee.setSurname(resultSet.getString(3));
                     break;
                 case 104:
-                    employee.setSalary(resultSet.getDouble(3));
+                    employee.setSalary(resultSet.getDouble(4));
                     break;
             }
         }
@@ -37,10 +38,11 @@ public class OracleEmployeeDAO implements EmployeeDAO {
         Connection connection = oracleConnection.getConnection();
 
         try {
-            PreparedStatement addObject = connection.prepareStatement("insert into OBJECTS (OBJECT_ID, NAME, TYPE_ID) values (?, ?, 1)");
-            PreparedStatement addName = connection.prepareStatement("insert into PARAMS (text_value, number_value, object_id, attribute_id) values (?, NULL, ?, 1001)");
-            PreparedStatement addSurname = connection.prepareStatement("insert into PARAMS (text_value, number_value, object_id, attribute_id) values (?, NULL, ?, 1002)");
-            PreparedStatement addLink = connection.prepareStatement("insert into LINKS (?, ?, ?, 21)");
+            PreparedStatement addObject = connection.prepareStatement("insert into OBJECTS (OBJECT_ID, NAME, TYPE_ID) values (?, ?, 2)");
+            PreparedStatement addName = connection.prepareStatement("insert into PARAMS (text_value, number_value, object_id, attribute_id) values (?, NULL, ?, 102)");
+            PreparedStatement addSurname = connection.prepareStatement("insert into PARAMS (text_value, number_value, object_id, attribute_id) values (?, NULL, ?, 103)");
+            PreparedStatement addSalary = connection.prepareStatement("insert into PARAMS (text_value, number_value, object_id, attribute_id) values (NULL, ?, ?, 104)");
+            PreparedStatement addLink = connection.prepareStatement("insert into LINKS (link_id, parent_id, child_id, link_type_id) values (?, ?, ?, 150)");
 
             addObject.setLong(1, employee.getID());
             addObject.setString(2, employee.getSurname());
@@ -51,6 +53,9 @@ public class OracleEmployeeDAO implements EmployeeDAO {
             addSurname.setString(1, employee.getSurname());
             addSurname.setLong(2, employee.getID());
 
+            addSalary.setDouble(1,employee.getSalary());
+            addSalary.setLong(2, employee.getID());
+
             addLink.setLong(1, employee.getID()%13);
             addLink.setLong(2, employee.getDepartment().getID());
             addLink.setLong(3, employee.getID());
@@ -58,9 +63,10 @@ public class OracleEmployeeDAO implements EmployeeDAO {
             int i = addObject.executeUpdate();
             int j = addName.executeUpdate();
             int k = addSurname.executeUpdate();
+            int z = addSalary.executeUpdate();
             int s = addLink.executeUpdate();
 
-            if(i==1 && j==1 && k==1 && s==1)
+            if(i==1 && j==1 && k==1 && s==1 && z==1)
                 return true;
 
         } catch (SQLException e) {
@@ -83,7 +89,7 @@ public class OracleEmployeeDAO implements EmployeeDAO {
             Statement statement = connection.createStatement();
             Statement departStat = connection.createStatement();
 
-            ResultSet resultSet = statement.executeQuery("select attr.ATTRIBUTE_ID, p.text_value, p.NUMBER_VALUE\n" +
+            ResultSet resultSet = statement.executeQuery("select attr.ATTRIBUTE_ID, o.object_id, p.text_value, p.NUMBER_VALUE\n" +
                     "from objects o\n" +
                     "inner join attributes attr on attr.type_id = o.TYPE_ID\n" +
                     "left join params p on p.ATTRIBUTE_ID = attr.ATTRIBUTE_ID\n" +
@@ -105,13 +111,11 @@ public class OracleEmployeeDAO implements EmployeeDAO {
             while(departSet.next()){
                 department = oracleDepartmentDAO.findDepartment(departSet.getLong(1));
             }
-
             employee.setDepartment(department);
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         SingletonCache.getInstance().put(key, employee);
         return employee;
     }
@@ -135,7 +139,7 @@ public class OracleEmployeeDAO implements EmployeeDAO {
             updateDepartment.setLong(2, employee.getID());
 
             updateSalary.setDouble(1, employee.getSalary());
-            updateSalary.setLong(1, employee.getID());
+            updateSalary.setLong(2, employee.getID());
 
             int i = updateName.executeUpdate();
             int j = updateSurname.executeUpdate();

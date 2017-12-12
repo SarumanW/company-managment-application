@@ -11,4 +11,8 @@ public class OracleDAOFactory extends DAOFactory {
     public DepartmentDAO getDepartmentDAO(Connection connection) {
         return new OracleDepartmentDAO();
     }
+
+    public ManagerDAO getManagerDAO(Connection connection){
+        return  new OracleManagerDAO();
+    }
 }

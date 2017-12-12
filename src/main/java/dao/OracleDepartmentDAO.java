@@ -4,6 +4,7 @@ import caching.SingletonCache;
 import domain.Department;
 import domain.Employee;
 import connections.OracleConnection;
+import generator.UniqueID;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,10 +16,16 @@ public class OracleDepartmentDAO implements DepartmentDAO {
 
     private Department extractDepartmentFromResultSet(ResultSet resultSet) throws SQLException {
         Department department = new Department();
+        department.setID(resultSet.getLong(2));
 
-        department.setID(resultSet.getLong(1));
-        department.setName(resultSet.getString(2));
-
+        while(resultSet.next()){
+            int i = resultSet.getInt(1);
+            switch (i){
+                case 101:
+                    department.setName(resultSet.getString(3));
+                    break;
+            }
+        }
         return department;
     }
 
@@ -26,8 +33,9 @@ public class OracleDepartmentDAO implements DepartmentDAO {
         Connection connection = oracleConnection.getConnection();
 
         try {
-            PreparedStatement addObject = connection.prepareStatement("insert into OBJECTS (OBJECT_ID, NAME, TYPE_ID) values (?, ?, 2)");
-            PreparedStatement addName = connection.prepareStatement("insert into PARAMS (text_value, number_value, object_id, attribute_id) values (?, NULL, ?, 1003)");
+            PreparedStatement addObject = connection.prepareStatement("insert into OBJECTS (OBJECT_ID, NAME, TYPE_ID) values (?, ?, 1)");
+            PreparedStatement addName = connection.prepareStatement("insert into PARAMS (text_value, number_value, object_id, attribute_id) values (?, NULL, ?, 101)");
+            PreparedStatement addLink = connection.prepareStatement("insert into LINKS (link_id, parent_id, child_id, link_type_id) values (?, ?, ?, 150)");
 
             addObject.setLong(1, department.getID());
             addObject.setString(2, department.getName());
@@ -36,6 +44,13 @@ public class OracleDepartmentDAO implements DepartmentDAO {
 
             int i = addObject.executeUpdate();
             int j = addName.executeUpdate();
+
+            for(Employee employee : department.getEmployees()){
+                addLink.setLong(1, employee.getID() * department.getID() / 145678);
+                addLink.setLong(2, department.getID());
+                addLink.setLong(3, employee.getID());
+                addLink.executeUpdate();
+            }
 
             if(i==1 && j==1)
                 return true;
@@ -59,12 +74,12 @@ public class OracleDepartmentDAO implements DepartmentDAO {
             Statement departmentStat = connection.createStatement();
             Statement employeesStat = connection.createStatement();
 
-            ResultSet resultSet = departmentStat.executeQuery("select department.object_id as id, name.text_value as name\n" +
-                    "from objects department\n" +
-                    "join params name on name.OBJECT_ID = department.OBJECT_ID\n" +
-                    "where department.TYPE_ID = (select type_id from types where name = 'Department')\n" +
-                    "and name.ATTRIBUTE_ID in (select attribute_id from attributes where name = 'Name')\n" +
-                    "and department.OBJECT_ID = " + key);
+            ResultSet resultSet = departmentStat.executeQuery("select attr.ATTRIBUTE_ID, o.object_id, p.text_value\n" +
+                    "from objects o\n" +
+                    "inner join attributes attr on attr.type_id = o.TYPE_ID\n" +
+                    "left join params p on p.ATTRIBUTE_ID = attr.ATTRIBUTE_ID\n" +
+                    "and p.object_id = o.OBJECT_ID\n" +
+                    "where o.object_id = " + key);
 
             ResultSet employeeSet = employeesStat.executeQuery("SELECT O.OBJECT_ID" +
                     "   FROM Objects O\n" +
@@ -72,26 +87,24 @@ public class OracleDepartmentDAO implements DepartmentDAO {
                     "    INNER JOIN LINKTYPES LT ON L.LINK_TYPE_ID = LT.LINK_TYPE_ID\n" +
                     "    INNER JOIN OBJECTS D ON L.PARENT_ID = D.OBJECT_ID\n" +
                     "    INNER JOIN TYPES OT ON D.TYPE_ID = OT.TYPE_ID\n" +
-                    "    WHERE OT.NAME = 'Department'\n" +
-                    "    AND LT.NAME = 'EMPDEP'\n" +
+                    "    WHERE OT.NAME = 'department'\n" +
+                    "    AND LT.NAME = 'dept-employee'\n" +
                     "    AND D.object_id = " + key);
 
-            while(resultSet.next()){
-                department = extractDepartmentFromResultSet(resultSet);
-            }
+            department = extractDepartmentFromResultSet(resultSet);
+
 
             while(employeeSet.next()){
                 Employee employee = oracleEmployeeDAO.findEmployee(employeeSet.getLong(1));
                 employees.add(employee);
             }
-
             department.setEmployees(employees);
 
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
+        SingletonCache.getInstance().put(key, department);
         return department;
     }
 
@@ -99,7 +112,7 @@ public class OracleDepartmentDAO implements DepartmentDAO {
         Connection connection = oracleConnection.getConnection();
 
         try {
-            PreparedStatement updateName = connection.prepareStatement("update params set text_value = ? where object_id = ? and attribute_id = 1003");
+            PreparedStatement updateName = connection.prepareStatement("update params set text_value = ? where object_id = ? and attribute_id = 101");
 
             updateName.setString(1, department.getName());
             updateName.setLong(2, department.getID());
@@ -145,8 +158,8 @@ public class OracleDepartmentDAO implements DepartmentDAO {
             ResultSet resultSet = departmentStat.executeQuery("select department.object_id as id, name.text_value as name\n" +
                     "from objects department\n" +
                     "join params name on name.OBJECT_ID = department.OBJECT_ID\n" +
-                    "where department.TYPE_ID = (select type_id from types where name = 'Department')\n" +
-                    "and name.ATTRIBUTE_ID in (select attribute_id from attributes where name = 'Name')");
+                    "where department.TYPE_ID = (select type_id from types where name = 'department')\n" +
+                    "and name.ATTRIBUTE_ID in (select attribute_id from attributes where name = 'dep-name')");
 
             while(resultSet.next()){
                 Department department = extractDepartmentFromResultSet(resultSet);
@@ -162,8 +175,8 @@ public class OracleDepartmentDAO implements DepartmentDAO {
                         "    INNER JOIN LINKTYPES LT ON L.LINK_TYPE_ID = LT.LINK_TYPE_ID\n" +
                         "    INNER JOIN OBJECTS D ON L.PARENT_ID = D.OBJECT_ID\n" +
                         "    INNER JOIN TYPES OT ON D.TYPE_ID = OT.TYPE_ID\n" +
-                        "    WHERE OT.NAME = 'Department'\n" +
-                        "    AND LT.NAME = 'EMPDEP'\n" +
+                        "    WHERE OT.NAME = 'department'\n" +
+                        "    AND LT.NAME = 'dep-name'\n" +
                         "    AND D.object_id = " + department.getID());
 
                 while(employeeSet.next()){
