@@ -68,7 +68,7 @@ public class OracleDepartmentDAO implements DepartmentDAO {
             return department;
 
         Connection connection = oracleConnection.getConnection();
-        List<Employee> employees = new ArrayList<Employee>();
+        List<Employee> employees = new ArrayList<>();
 
         try {
             Statement departmentStat = connection.createStatement();

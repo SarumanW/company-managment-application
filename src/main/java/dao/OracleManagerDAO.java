@@ -3,8 +3,11 @@ package dao;
 import caching.SingletonCache;
 import connections.OracleConnection;
 import domain.Manager;
+import domain.Project;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OracleManagerDAO implements ManagerDAO {
     private OracleConnection oracleConnection = new OracleConnection();
@@ -74,9 +77,11 @@ public class OracleManagerDAO implements ManagerDAO {
             return manager;
 
         Connection connection = oracleConnection.getConnection();
+        List<Project> projects = new ArrayList<>();
 
         try {
             Statement statement = connection.createStatement();
+            Statement projectStatemanet = connection.createStatement();
 
             ResultSet resultSet = statement.executeQuery("select attr.ATTRIBUTE_ID, o.object_id, p.text_value, p.NUMBER_VALUE\n" +
                     "from objects o\n" +
@@ -84,6 +89,16 @@ public class OracleManagerDAO implements ManagerDAO {
                     "left join params p on p.ATTRIBUTE_ID = attr.ATTRIBUTE_ID\n" +
                     "and p.object_id = o.OBJECT_ID\n" +
                     "where o.object_id = " + key);
+
+            ResultSet projectSet = projectStatemanet.executeQuery("SELECT P.OBJECT_ID, P.NAME\n" +
+                    "   FROM Objects P\n" +
+                    "    INNER JOIN LINKS L ON L.CHILD_ID = P.OBJECT_ID\n" +
+                    "    INNER JOIN LINKTYPES LT ON L.LINK_TYPE_ID = LT.LINK_TYPE_ID\n" +
+                    "    INNER JOIN OBJECTS M ON L.PARENT_ID = M.OBJECT_ID\n" +
+                    "    INNER JOIN TYPES OT ON M.TYPE_ID = OT.TYPE_ID\n" +
+                    "    WHERE OT.TYPE_ID = 4\n" +
+                    "    AND LT.LINK_TYPE_ID = 151\n" +
+                    "    AND M.OBJECT_ID = " + key);
 
             manager = extractManagerFromResultSet(resultSet);
 

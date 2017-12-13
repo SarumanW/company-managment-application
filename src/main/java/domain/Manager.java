@@ -56,6 +56,14 @@ public class Manager {
         this.salary = salary;
     }
 
+    public List<Project> getProjectList() {
+        return projectList;
+    }
+
+    public void setProjectList(List<Project> projectList) {
+        this.projectList = projectList;
+    }
+
     @Override
     public String toString() {
         return "Manager{" +
