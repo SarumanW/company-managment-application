@@ -3,6 +3,7 @@ package domain;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class Project {
@@ -10,23 +11,18 @@ public class Project {
     private Calendar start;
     private Calendar end;
     private String name;
-    private SimpleDateFormat format;
     private Manager manager;
     private Customer customer;
 
-    public Project(){
+    public Project() {
         start = new GregorianCalendar();
-        format = new SimpleDateFormat("dd-MM-yyyy");
+        end = new GregorianCalendar();
     }
 
-    public Project(long projectID, String endDate){
+    public Project(long projectID, Date endDate){
         this();
         end = new GregorianCalendar();
-        try {
-            end.setTime(format.parse(endDate));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        end.setTime(endDate);
     }
 
     public long getProjectID() {
@@ -45,6 +41,10 @@ public class Project {
         this.start = start;
     }
 
+    public void setStart(Date date) {
+        this.start = toCalendar(date);
+    }
+
     public Calendar getEnd() {
         return end;
     }
@@ -53,12 +53,8 @@ public class Project {
         this.end = end;
     }
 
-    public SimpleDateFormat getFormat() {
-        return format;
-    }
-
-    public void setFormat(SimpleDateFormat format) {
-        this.format = format;
+    public void setEnd(Date date) {
+        this.end = toCalendar(date);
     }
 
     public Manager getManager() {
@@ -83,5 +79,11 @@ public class Project {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    private Calendar toCalendar(Date date){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar;
     }
 }

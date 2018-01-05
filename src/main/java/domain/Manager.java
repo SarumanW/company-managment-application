@@ -14,7 +14,7 @@ public class Manager {
 
     public Manager(){
         this.setID(UniqueID.generateID(this));
-        projectList = new ArrayList<Project>();
+        projectList = new ArrayList<>();
     }
 
     public Manager(String name, String surname, double salary){

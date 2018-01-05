@@ -20,10 +20,10 @@ public class OracleProjectDAO implements ProjectDAO {
                     project.setName(resultSet.getString(3));
                     break;
                 case 111:
-                    project.getStart().setTime(resultSet.getDate(4));
+                    project.setStart(resultSet.getDate(4));
                     break;
                 case 112:
-                    project.getEnd().setTime(resultSet.getDate(4));
+                    project.setEnd(resultSet.getDate(4));
                     break;
             }
         }

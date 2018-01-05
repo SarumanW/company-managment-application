@@ -11,6 +11,7 @@ import java.util.List;
 
 public class OracleManagerDAO implements ManagerDAO {
     private OracleConnection oracleConnection = new OracleConnection();
+    private OracleProjectDAO oracleProjectDAO = new OracleProjectDAO();
 
     private Manager extractManagerFromResultSet(ResultSet resultSet) throws SQLException {
         Manager manager = new Manager();
@@ -41,7 +42,6 @@ public class OracleManagerDAO implements ManagerDAO {
             PreparedStatement addName = connection.prepareStatement("insert into PARAMS (text_value, number_value, object_id, attribute_id) values (?, NULL, ?, 107)");
             PreparedStatement addSurname = connection.prepareStatement("insert into PARAMS (text_value, number_value, object_id, attribute_id) values (?, NULL, ?, 108)");
             PreparedStatement addSalary = connection.prepareStatement("insert into PARAMS (text_value, number_value, object_id, attribute_id) values (NULL, ?, ?, 109)");
-            //PreparedStatement addLink = connection.prepareStatement("insert into LINKS (link_id, parent_id, child_id, link_type_id) values (?, ?, ?, 151)");
 
             addObject.setLong(1, manager.getID());
             addObject.setString(2, manager.getSurname());
@@ -55,12 +55,24 @@ public class OracleManagerDAO implements ManagerDAO {
             addSalary.setDouble(1,manager.getSalary());
             addSalary.setLong(2, manager.getID());
 
+            StringBuffer linkQuery = new StringBuffer();
+            for(int i = 0; i < manager.getProjectList().size(); i++){
+                Project project = manager.getProjectList().get(i);
+                linkQuery.append("insert into LINKS (link_id, parent_id, child_id, link_type_id) values ("
+                        + project.getProjectID()*manager.getID()%1273 +
+                        "," + manager.getID() +
+                        "," + project.getProjectID() + "151);");
+            }
+
+            PreparedStatement linksStatement = connection.prepareStatement(linkQuery.toString());
+
             int i = addObject.executeUpdate();
             int j = addName.executeUpdate();
             int k = addSurname.executeUpdate();
             int z = addSalary.executeUpdate();
+            int m = linksStatement.executeUpdate();
 
-            if(i==1 && j==1 && k==1 && z==1)
+            if(i==1 && j==1 && k==1 && z==1 && m==1)
                 return true;
 
         } catch (SQLException e) {
@@ -81,7 +93,7 @@ public class OracleManagerDAO implements ManagerDAO {
 
         try {
             Statement statement = connection.createStatement();
-            Statement projectStatemanet = connection.createStatement();
+            Statement projectStatement = connection.createStatement();
 
             ResultSet resultSet = statement.executeQuery("select attr.ATTRIBUTE_ID, o.object_id, p.text_value, p.NUMBER_VALUE\n" +
                     "from objects o\n" +
@@ -90,7 +102,7 @@ public class OracleManagerDAO implements ManagerDAO {
                     "and p.object_id = o.OBJECT_ID\n" +
                     "where o.object_id = " + key);
 
-            ResultSet projectSet = projectStatemanet.executeQuery("SELECT P.OBJECT_ID, P.NAME\n" +
+            ResultSet projectSet = projectStatement.executeQuery("SELECT P.OBJECT_ID, P.NAME\n" +
                     "   FROM Objects P\n" +
                     "    INNER JOIN LINKS L ON L.CHILD_ID = P.OBJECT_ID\n" +
                     "    INNER JOIN LINKTYPES LT ON L.LINK_TYPE_ID = LT.LINK_TYPE_ID\n" +
@@ -101,6 +113,12 @@ public class OracleManagerDAO implements ManagerDAO {
                     "    AND M.OBJECT_ID = " + key);
 
             manager = extractManagerFromResultSet(resultSet);
+
+            while(projectSet.next()){
+                Project project = oracleProjectDAO.findProject(projectSet.getLong(1));
+                projects.add(project);
+            }
+            manager.setProjectList(projects);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -116,7 +134,6 @@ public class OracleManagerDAO implements ManagerDAO {
             PreparedStatement updateName = connection.prepareStatement("update params set text_value = ? where object_id = ? and attribute_id = 107");
             PreparedStatement updateSurname = connection.prepareStatement("update params set text_value = ? where object_id = ? and attribute_id = 108");
             PreparedStatement updateSalary = connection.prepareStatement("update params set number_value = ? where object_id = ? and attribute_id = 109");
-            //PreparedStatement updateDepartment = connection.prepareStatement("update links set parent_id = ? where child_id = ? and link_type_id = 150");
 
             updateName.setString(1, manager.getName());
             updateName.setLong(2, manager.getID());
@@ -147,7 +164,7 @@ public class OracleManagerDAO implements ManagerDAO {
             Statement statement = connection.createStatement();
             int i = statement.executeUpdate("delete from params where object_id = " + key);
             int j = statement.executeUpdate("delete from objects where object_id = " + key);
-            int k = statement.executeUpdate("delete from links where child_id = " + key);
+            int k = statement.executeUpdate("delete from links where parent_id = " + key);
 
             if(i==1 && j==1 && k==1)
                 return true;
