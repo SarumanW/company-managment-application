@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 public class Project {
     private long projectID;
@@ -13,6 +14,7 @@ public class Project {
     private String name;
     private Manager manager;
     private Customer customer;
+    private List<Sprint> sprints;
 
     public Project() {
         start = Calendar.getInstance();
@@ -79,6 +81,14 @@ public class Project {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<Sprint> getSprints() {
+        return sprints;
+    }
+
+    public void setSprints(List<Sprint> sprints) {
+        this.sprints = sprints;
     }
 
     private Calendar toCalendar(Date date){
