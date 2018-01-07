@@ -3,8 +3,6 @@ package dao.oracle_dao;
 import caching.SingletonCache;
 import connections.OracleConnection;
 import dao.dao_interface.ProjectDAO;
-import dao.oracle_dao.OracleCustomerDAO;
-import dao.oracle_dao.OracleManagerDAO;
 import domain.Customer;
 import domain.Manager;
 import domain.Project;
