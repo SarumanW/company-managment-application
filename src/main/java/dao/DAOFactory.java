@@ -1,7 +1,7 @@
 package dao;
 
-import connections.OracleConnection;
-import domain.Employee;
+import dao.dao_interface.DepartmentDAO;
+import dao.dao_interface.EmployeeDAO;
 
 import java.sql.Connection;
 

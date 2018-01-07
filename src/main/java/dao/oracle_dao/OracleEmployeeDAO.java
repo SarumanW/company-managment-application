@@ -1,7 +1,9 @@
-package dao;
+package dao.oracle_dao;
 
 import caching.SingletonCache;
 import connections.OracleConnection;
+import dao.dao_interface.EmployeeDAO;
+import dao.oracle_dao.OracleDepartmentDAO;
 import domain.Department;
 import domain.Employee;
 
@@ -79,11 +81,11 @@ public class OracleEmployeeDAO implements EmployeeDAO {
     public Employee findEmployee(long key) {
         Employee employee = (Employee) SingletonCache.getInstance().get(key);
 
-        if(employee!=null)
+        if(employee != null)
             return employee;
 
         Connection connection = oracleConnection.getConnection();
-        Department department = new Department();
+        Department department;
 
         try {
             Statement statement = connection.createStatement();
@@ -107,15 +109,13 @@ public class OracleEmployeeDAO implements EmployeeDAO {
                     "    AND E.OBJECT_ID = " + employee.getID());
 
             employee = extractEmployeeFromResultSet(resultSet);
-
-            while(departSet.next()){
-                department = oracleDepartmentDAO.findDepartment(departSet.getLong(1));
-            }
+            department = oracleDepartmentDAO.findDepartment(departSet.getLong(1));
             employee.setDepartment(department);
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         SingletonCache.getInstance().put(key, employee);
         return employee;
     }
@@ -163,8 +163,9 @@ public class OracleEmployeeDAO implements EmployeeDAO {
             int i = statement.executeUpdate("delete from params where object_id = " + key);
             int j = statement.executeUpdate("delete from objects where object_id = " + key);
             int k = statement.executeUpdate("delete from links where child_id = " + key);
+            int s = statement.executeUpdate("delete from links where parent_id = " + key);
 
-            if(i==1 && j==1 && k==1)
+            if(i==1 && j==1 && k==1 && s==1)
                 return true;
 
         } catch (SQLException e) {

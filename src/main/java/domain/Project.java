@@ -15,7 +15,7 @@ public class Project {
     private Customer customer;
 
     public Project() {
-        start = new GregorianCalendar();
+        start = Calendar.getInstance();
         end = new GregorianCalendar();
     }
 

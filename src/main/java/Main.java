@@ -1,14 +1,6 @@
-import connections.OracleConnection;
-import dao.OracleDepartmentDAO;
-import dao.OracleEmployeeDAO;
-import domain.Department;
-import domain.Employee;
 import domain.Project;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;

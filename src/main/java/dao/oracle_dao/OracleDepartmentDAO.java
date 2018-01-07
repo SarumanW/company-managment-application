@@ -1,10 +1,10 @@
-package dao;
+package dao.oracle_dao;
 
 import caching.SingletonCache;
+import dao.dao_interface.DepartmentDAO;
 import domain.Department;
 import domain.Employee;
 import connections.OracleConnection;
-import generator.UniqueID;
 
 import java.sql.*;
 import java.util.ArrayList;

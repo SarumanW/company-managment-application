@@ -1,4 +1,4 @@
-package dao;
+package dao.dao_interface;
 
 import domain.Employee;
 
