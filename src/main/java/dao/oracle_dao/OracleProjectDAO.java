@@ -3,17 +3,17 @@ package dao.oracle_dao;
 import caching.SingletonCache;
 import connections.OracleConnection;
 import dao.dao_interface.ProjectDAO;
-import domain.Customer;
-import domain.Manager;
-import domain.Project;
-import domain.Sprint;
+import domain.*;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OracleProjectDAO implements ProjectDAO {
     private OracleConnection oracleConnection = new OracleConnection();
     private OracleManagerDAO oracleManagerDAO = new OracleManagerDAO();
     private OracleCustomerDAO oracleCustomerDAO = new OracleCustomerDAO();
+    private OracleSprintDAO oracleSprintDAO = new OracleSprintDAO();
 
     private Project extractProjectFromResultSet(ResultSet resultSet) throws SQLException {
         Project project = new Project();
@@ -107,11 +107,13 @@ public class OracleProjectDAO implements ProjectDAO {
         Connection connection = oracleConnection.getConnection();
         Manager manager;
         Customer customer;
+        List<Sprint> sprints = new ArrayList<>();
 
         try {
             Statement statement = connection.createStatement();
             Statement managerStat = connection.createStatement();
             Statement customerStat = connection.createStatement();
+            Statement sprintStat = connection.createStatement();
 
             ResultSet resultSet = statement.executeQuery("select attr.ATTRIBUTE_ID, o.object_id, p.text_value, p.DATE_VALUE\n" +
                     "from objects o\n" +
@@ -140,11 +142,26 @@ public class OracleProjectDAO implements ProjectDAO {
                     "    AND LT.LINK_TYPE_ID = 152\n" +
                     "    AND P.OBJECT_ID = " + key);
 
+            ResultSet sprintSet = sprintStat.executeQuery("SELECT S.OBJECT_ID, S.name\n" +
+                    "   FROM Objects S\n" +
+                    "    INNER JOIN LINKS L ON L.CHILD_ID = S.OBJECT_ID\n" +
+                    "    INNER JOIN LINKTYPES LT ON L.LINK_TYPE_ID = LT.LINK_TYPE_ID\n" +
+                    "    INNER JOIN OBJECTS P ON L.PARENT_ID = P.OBJECT_ID\n" +
+                    "    INNER JOIN TYPES PT ON P.TYPE_ID = PT.TYPE_ID\n" +
+                    "    WHERE PT.TYPE_ID = 5\n" +
+                    "    AND LT.LINK_TYPE_ID = 153\n" +
+                    "    AND P.OBJECT_ID = " + key);
+
             project = extractProjectFromResultSet(resultSet);
             manager = oracleManagerDAO.findManager(managSet.getLong(1));
             customer = oracleCustomerDAO.findCustomer(custSet.getLong(1));
             project.setManager(manager);
             project.setCustomer(customer);
+
+            while(sprintSet.next())
+                sprints.add(oracleSprintDAO.findSprint(sprintSet.getLong(1)));
+
+            project.setSprints(sprints);
 
         } catch (SQLException e) {
             e.printStackTrace();
