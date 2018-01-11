@@ -96,6 +96,7 @@ INSERT INTO LINKTYPES (link_type_id, name) VALUES (151, 'manager-project');
 INSERT INTO LINKTYPES (link_type_id, name) VALUES (152, 'customer-project');
 INSERT INTO LINKTYPES (link_type_id, name) VALUES (153, 'project-sprint');
 INSERT INTO LINKTYPES (link_type_id, name) VALUES (154, 'sprint-task');
+INSERT INTO LINKTYPES (link_type_id, name) VALUES (155, 'employee-task');
 
 CREATE TABLE LINKS 
     (link_id number(10),
@@ -111,3 +112,6 @@ INSERT INTO LINKS (link_id, parent_id, child_id, link_type_id) VALUES (1004, 16,
 INSERT INTO LINKS (link_id, parent_id, child_id, link_type_id) VALUES (1005, 15, 17, 152);
 INSERT INTO LINKS (link_id, parent_id, child_id, link_type_id) VALUES (1006, 17, 18, 153);
 INSERT INTO LINKS (link_id, parent_id, child_id, link_type_id) VALUES (1007, 18, 19, 154);
+INSERT INTO LINKS (link_id, parent_id, child_id, link_type_id) VALUES (1008, 11, 19, 155);
+INSERT INTO LINKS (link_id, parent_id, child_id, link_type_id) VALUES (1009, 12, 19, 155);
+INSERT INTO LINKS (link_id, parent_id, child_id, link_type_id) VALUES (1010, 13, 19, 155);

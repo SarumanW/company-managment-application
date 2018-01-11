@@ -98,15 +98,15 @@ public class OracleEmployeeDAO implements EmployeeDAO {
                     "and p.object_id = o.OBJECT_ID\n" +
                     "where o.object_id = " + key);
 
-            ResultSet departSet = departStat.executeQuery("SELECT D.OBJECT_ID" +
-                    "   FROM Objects D\n" +
-                    "    INNER JOIN LINKS L ON L.PARENT_ID = D.OBJECT_ID\n" +
-                    "    INNER JOIN LINKTYPES LT ON L.LINK_TYPE_ID = LT.LINK_TYPE_ID\n" +
-                    "    INNER JOIN OBJECTS E ON L.CHILD_ID = E.OBJECT_ID\n" +
-                    "    INNER JOIN TYPES OT ON E.TYPE_ID = OT.TYPE_ID\n" +
-                    "    WHERE OT.NAME = 'employee'\n" +
-                    "    AND LT.NAME = 'dept-employee'\n" +
-                    "    AND E.OBJECT_ID = " + employee.getID());
+            ResultSet departSet = departStat.executeQuery("SELECT D.OBJECT_ID, D.NAME\n" +
+                    "FROM Objects D\n" +
+                    "INNER JOIN LINKS L ON L.PARENT_ID = D.OBJECT_ID\n" +
+                    "INNER JOIN LINKTYPES LT ON L.LINK_TYPE_ID = LT.LINK_TYPE_ID\n" +
+                    "INNER JOIN OBJECTS E ON L.CHILD_ID = E.OBJECT_ID\n" +
+                    "INNER JOIN TYPES OT ON E.TYPE_ID = OT.TYPE_ID\n" +
+                    "WHERE OT.TYPE_ID = 2\n" +
+                    "AND LT.LINK_TYPE_ID = 150\n" +
+                    "AND E.OBJECT_ID = " + employee.getID());
 
             employee = extractEmployeeFromResultSet(resultSet);
             department = oracleDepartmentDAO.findDepartment(departSet.getLong(1));
