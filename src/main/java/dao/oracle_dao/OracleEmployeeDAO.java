@@ -12,8 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OracleEmployeeDAO implements EmployeeDAO {
-    private OracleConnection oracleConnection = new OracleConnection();
-    private OracleDepartmentDAO oracleDepartmentDAO = new OracleDepartmentDAO();
+    private OracleConnection oracleConnection;
+    private OracleDepartmentDAO oracleDepartmentDAO;
+
+    public OracleEmployeeDAO(){
+        oracleConnection = new OracleConnection();
+        oracleDepartmentDAO = new OracleDepartmentDAO();
+    }
 
     private Employee extractEmployeeFromResultSet(ResultSet resultSet) throws SQLException {
         Employee employee = new Employee();
@@ -36,6 +41,7 @@ public class OracleEmployeeDAO implements EmployeeDAO {
         return employee;
     }
 
+    @Override
     public boolean insertEmployee(Employee employee) {
         Connection connection = oracleConnection.getConnection();
 
@@ -78,6 +84,7 @@ public class OracleEmployeeDAO implements EmployeeDAO {
         return false;
     }
 
+    @Override
     public Employee findEmployee(long key) {
         Employee employee = (Employee) SingletonCache.getInstance().get(key);
 
@@ -120,6 +127,7 @@ public class OracleEmployeeDAO implements EmployeeDAO {
         return employee;
     }
 
+    @Override
     public boolean updateEmployee(Employee employee) {
         Connection connection = oracleConnection.getConnection();
 
@@ -155,6 +163,7 @@ public class OracleEmployeeDAO implements EmployeeDAO {
         return false;
     }
 
+    @Override
     public boolean deleteEmployee(long key) {
         Connection connection = oracleConnection.getConnection();
 
@@ -172,53 +181,5 @@ public class OracleEmployeeDAO implements EmployeeDAO {
             e.printStackTrace();
         }
         return false;
-    }
-
-    public List<Employee> getAllEmployees() {
-        Connection connection = oracleConnection.getConnection();
-        List<Employee> employees = new ArrayList<Employee>();
-
-        try {
-            Statement statement = connection.createStatement();
-            Statement departStat = connection.createStatement();
-
-            ResultSet resultSet = statement.executeQuery("select employee.object_id as id, first_name.text_value as name, last_name.text_value as surname\n" +
-                    "from objects employee\n" +
-                    "join params first_name on first_name.OBJECT_ID = employee.OBJECT_ID\n" +
-                    "join params last_name on last_name.object_id = employee.OBJECT_ID\n" +
-                    "where employee.TYPE_ID = (select type_id from types where name = 'employee')\n" +
-                    "and first_name.ATTRIBUTE_ID in (select attribute_id from attributes where name = 'emp_name')\n" +
-                    "and last_name.ATTRIBUTE_ID in (select attribute_id from attributes where name = 'emp_surname')");
-
-            while(resultSet.next()){
-                Employee employee = extractEmployeeFromResultSet(resultSet);
-                employees.add(employee);
-            }
-
-            for(Employee employee: employees){
-                Department department = null;
-
-                ResultSet depart = departStat.executeQuery("SELECT D.OBJECT_ID, D.name\n" +
-                        "   FROM Objects D\n" +
-                        "    INNER JOIN LINKS L ON L.PARENT_ID = D.OBJECT_ID\n" +
-                        "    INNER JOIN LINKTYPES LT ON L.LINK_TYPE_ID = LT.LINK_TYPE_ID\n" +
-                        "    INNER JOIN OBJECTS E ON L.CHILD_ID = E.OBJECT_ID\n" +
-                        "    INNER JOIN TYPES OT ON E.TYPE_ID = OT.TYPE_ID\n" +
-                        "    WHERE OT.NAME = 'employee'\n" +
-                        "    AND LT.NAME = 'dept_employee'\n" +
-                        "    AND E.OBJECT_ID = " + employee.getID());
-
-                while(depart.next()){
-                    department = oracleDepartmentDAO.findDepartment(depart.getLong(1));
-                }
-
-                employee.setDepartment(department);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return employees;
     }
 }

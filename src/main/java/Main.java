@@ -1,4 +1,11 @@
+import dao.DAOFactory;
+import dao.dao_interface.CustomerDAO;
+import dao.dao_interface.EmployeeDAO;
+import dao.dao_interface.TaskDAO;
+import dao.oracle_dao.OracleDAOFactory;
+import domain.Employee;
 import domain.Project;
+import domain.Task;
 
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -9,16 +16,19 @@ public class Main {
     public static void main(String[] args) throws SQLException, ParseException {
         System.out.println("Compiled");
 
-        Project project = new Project();
-        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-        project.setEnd(toCalendar(format.parse("13-05-99")));
+        DAOFactory daoFactory = new OracleDAOFactory();
+        TaskDAO taskDAO = daoFactory.getTaskDAO();
+        EmployeeDAO employeeDAO = daoFactory.getEmployeeDAO();
 
-        System.out.println(project.getEnd().getTime());
+        Employee employee1 = new Employee("Leila", "Kentuki", 5000);
+        Employee employee2 = new Employee("Mary", "MacDonald", 6000);
+        Task task = new Task("Creating picture", 40000);
+        task.addEmployee(employee1);
+        task.addEmployee(employee2);
+
+        employeeDAO.insertEmployee(employee1);
+        employeeDAO.insertEmployee(employee2);
+        taskDAO.insertTask(task);
     }
 
-    public static Calendar toCalendar(Date date){
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        return calendar;
-    }
 }

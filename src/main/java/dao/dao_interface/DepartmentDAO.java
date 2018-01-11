@@ -9,5 +9,4 @@ public interface DepartmentDAO {
     Department findDepartment(long key);
     boolean updateDepartment(Department department);
     boolean deleteDepartment(long key);
-    List<Department> getAllDepartments();
 }

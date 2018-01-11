@@ -11,8 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OracleDepartmentDAO implements DepartmentDAO {
-    private OracleConnection oracleConnection = new OracleConnection();
-    private OracleEmployeeDAO oracleEmployeeDAO = new OracleEmployeeDAO();
+    private OracleConnection oracleConnection;
+    private OracleEmployeeDAO oracleEmployeeDAO;
+
+    public OracleDepartmentDAO(){
+        oracleConnection = new OracleConnection();
+        oracleEmployeeDAO = new OracleEmployeeDAO();
+    }
 
     private Department extractDepartmentFromResultSet(ResultSet resultSet) throws SQLException {
         Department department = new Department();
@@ -29,6 +34,7 @@ public class OracleDepartmentDAO implements DepartmentDAO {
         return department;
     }
 
+    @Override
     public boolean insertDepartment(Department department) {
         Connection connection = oracleConnection.getConnection();
 
@@ -62,6 +68,7 @@ public class OracleDepartmentDAO implements DepartmentDAO {
         return false;
     }
 
+    @Override
     public Department findDepartment(long key) {
         Department department = (Department) SingletonCache.getInstance().get(key);
         if(department!=null)
@@ -87,8 +94,8 @@ public class OracleDepartmentDAO implements DepartmentDAO {
                     "    INNER JOIN LINKTYPES LT ON L.LINK_TYPE_ID = LT.LINK_TYPE_ID\n" +
                     "    INNER JOIN OBJECTS D ON L.PARENT_ID = D.OBJECT_ID\n" +
                     "    INNER JOIN TYPES OT ON D.TYPE_ID = OT.TYPE_ID\n" +
-                    "    WHERE OT.NAME = 'department'\n" +
-                    "    AND LT.NAME = 'dept-employee'\n" +
+                    "    WHERE OT.TYPE_ID = 1\n" +
+                    "    AND LT.LINK_TYPE_ID = 150\n" +
                     "    AND D.object_id = " + key);
 
             department = extractDepartmentFromResultSet(resultSet);
@@ -108,6 +115,7 @@ public class OracleDepartmentDAO implements DepartmentDAO {
         return department;
     }
 
+    @Override
     public boolean updateDepartment(Department department) {
         Connection connection = oracleConnection.getConnection();
 
@@ -129,6 +137,7 @@ public class OracleDepartmentDAO implements DepartmentDAO {
         return false;
     }
 
+    @Override
     public boolean deleteDepartment(long key) {
         Connection connection = oracleConnection.getConnection();
 
@@ -145,52 +154,5 @@ public class OracleDepartmentDAO implements DepartmentDAO {
             e.printStackTrace();
         }
         return false;
-    }
-
-    public List<Department> getAllDepartments() {
-        Connection connection = oracleConnection.getConnection();
-        List<Department> departments = new ArrayList<Department>();
-
-        try {
-            Statement departmentStat = connection.createStatement();
-            Statement employeesStat = connection.createStatement();
-
-            ResultSet resultSet = departmentStat.executeQuery("select department.object_id as id, name.text_value as name\n" +
-                    "from objects department\n" +
-                    "join params name on name.OBJECT_ID = department.OBJECT_ID\n" +
-                    "where department.TYPE_ID = (select type_id from types where name = 'department')\n" +
-                    "and name.ATTRIBUTE_ID in (select attribute_id from attributes where name = 'dep-name')");
-
-            while(resultSet.next()){
-                Department department = extractDepartmentFromResultSet(resultSet);
-                departments.add(department);
-            }
-
-            for(Department department : departments){
-                List<Employee> employees = new ArrayList<Employee>();
-
-                ResultSet employeeSet = employeesStat.executeQuery("SELECT O.OBJECT_ID" +
-                        "   FROM Objects O\n" +
-                        "    INNER JOIN LINKS L ON L.CHILD_ID = O.OBJECT_ID\n" +
-                        "    INNER JOIN LINKTYPES LT ON L.LINK_TYPE_ID = LT.LINK_TYPE_ID\n" +
-                        "    INNER JOIN OBJECTS D ON L.PARENT_ID = D.OBJECT_ID\n" +
-                        "    INNER JOIN TYPES OT ON D.TYPE_ID = OT.TYPE_ID\n" +
-                        "    WHERE OT.NAME = 'department'\n" +
-                        "    AND LT.NAME = 'dep-name'\n" +
-                        "    AND D.object_id = " + department.getID());
-
-                while(employeeSet.next()){
-                    Employee employee = oracleEmployeeDAO.findEmployee(employeeSet.getLong(1));
-                    employees.add(employee);
-                }
-
-                department.setEmployees(employees);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return departments;
     }
 }

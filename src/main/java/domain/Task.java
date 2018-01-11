@@ -1,5 +1,8 @@
 package domain;
 
+import generator.UniqueID;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class Task {
@@ -7,6 +10,17 @@ public class Task {
     private String name;
     private long estimate;
     private List<Employee> employees;
+
+    public Task(){
+        this.setTaskID(UniqueID.generateID(this));
+        employees = new ArrayList<>();
+    }
+
+    public Task(String name, long estimate){
+        this();
+        this.name = name;
+        this.estimate = estimate;
+    }
 
     public long getTaskID() {
         return taskID;
@@ -38,5 +52,10 @@ public class Task {
 
     public void setEmployees(List<Employee> employees) {
         this.employees = employees;
+    }
+
+    public void addEmployee(Employee employee){
+        this.employees.add(employee);
+        employee.addTask(this);
     }
 }

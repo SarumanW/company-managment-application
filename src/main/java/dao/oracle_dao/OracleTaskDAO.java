@@ -12,8 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OracleTaskDAO implements TaskDAO {
-    private OracleConnection oracleConnection = new OracleConnection();
-    private OracleEmployeeDAO oracleEmployeeDAO = new OracleEmployeeDAO();
+    private OracleConnection oracleConnection;
+    private OracleEmployeeDAO oracleEmployeeDAO;
+
+    public OracleTaskDAO(){
+        oracleConnection = new OracleConnection();
+        oracleEmployeeDAO = new OracleEmployeeDAO();
+    }
 
     private Task extractTaskFromResultSet(ResultSet resultSet) throws SQLException {
         Task task = new Task();

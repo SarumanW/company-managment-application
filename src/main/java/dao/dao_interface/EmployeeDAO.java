@@ -9,5 +9,4 @@ public interface EmployeeDAO {
     Employee findEmployee(long key);
     boolean updateEmployee(Employee employee);
     boolean deleteEmployee(long key);
-    List<Employee> getAllEmployees();
 }
