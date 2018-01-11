@@ -6,6 +6,7 @@ import dao.dao_interface.TaskDAO;
 import domain.Employee;
 import domain.Sprint;
 import domain.Task;
+import generator.UniqueID;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ public class OracleTaskDAO implements TaskDAO {
             PreparedStatement addObject = connection.prepareStatement("insert into OBJECTS (OBJECT_ID, NAME, TYPE_ID) values (?, ?, 7)");
             PreparedStatement addName = connection.prepareStatement("insert into PARAMS (text_value, object_id, attribute_id) values (?, ?, 114)");
             PreparedStatement addEstimate = connection.prepareStatement("insert into PARAMS (number_value, object_id, attribute_id) values (?, ?, 115)");
+            PreparedStatement addLink = connection.prepareStatement("insert into LINKS (link_id, parent_id, child_id, link_type_id) values (?, ?, ?, 155)");
 
             addObject.setLong(1, task.getTaskID());
             addObject.setString(2, task.getName());
@@ -56,22 +58,28 @@ public class OracleTaskDAO implements TaskDAO {
             addEstimate.setLong(1, task.getEstimate());
             addEstimate.setLong(2, task.getTaskID());
 
-            StringBuffer linkQuery = new StringBuffer();
-            for(int i = 0; i < task.getEmployees().size(); i++){
-                Employee employee = task.getEmployees().get(i);
-                linkQuery.append("insert into LINKS (link_id, parent_id, child_id, link_type_id) values ("
-                        + task.getTaskID()*employee.getID()%1273 +
-                        "," + task.getTaskID() +
-                        "," + employee.getID() + "155);");
-            }
+//            StringBuffer linkQuery = new StringBuffer();
+//            for(int i = 0; i < task.getEmployees().size(); i++){
+//                Employee employee = task.getEmployees().get(i);
+//                linkQuery.append("insert into LINKS (link_id, parent_id, child_id, link_type_id) values ("
+//                        + UniqueID.generateID(employee) +
+//                        "," + task.getTaskID() +
+//                        "," + employee.getID() + "155);");
+//            }
 
-            PreparedStatement linksStatement = connection.prepareStatement(linkQuery.toString());
+            if(task.getEmployees().size() != 0){
+                for(Employee employee : task.getEmployees()){
+                    addLink.setLong(1, UniqueID.generateID(addLink));
+                    addLink.setLong(2, employee.getID());
+                    addLink.setLong(3, task.getTaskID());
+                    addLink.executeUpdate();
+                }
+            }
 
             int i = addObject.executeUpdate();
             int j = addName.executeUpdate();
-            int k = linksStatement.executeUpdate();
 
-            if(i==1 && j==1 && k==1)
+            if(i==1 && j==1)
                 return true;
 
         } catch (SQLException e) {

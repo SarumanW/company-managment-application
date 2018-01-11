@@ -5,6 +5,7 @@ import dao.dao_interface.DepartmentDAO;
 import domain.Department;
 import domain.Employee;
 import connections.OracleConnection;
+import generator.UniqueID;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -16,7 +17,12 @@ public class OracleDepartmentDAO implements DepartmentDAO {
 
     public OracleDepartmentDAO(){
         oracleConnection = new OracleConnection();
-        oracleEmployeeDAO = new OracleEmployeeDAO();
+        //oracleEmployeeDAO = new OracleEmployeeDAO();
+    }
+
+    public OracleDepartmentDAO(OracleEmployeeDAO oracleEmployeeDAO){
+        this();
+        this.oracleEmployeeDAO = oracleEmployeeDAO;
     }
 
     private Department extractDepartmentFromResultSet(ResultSet resultSet) throws SQLException {
@@ -45,17 +51,20 @@ public class OracleDepartmentDAO implements DepartmentDAO {
 
             addObject.setLong(1, department.getID());
             addObject.setString(2, department.getName());
+
             addName.setString(1, department.getName());
             addName.setLong(2, department.getID());
 
             int i = addObject.executeUpdate();
             int j = addName.executeUpdate();
 
-            for(Employee employee : department.getEmployees()){
-                addLink.setLong(1, employee.getID() * department.getID() / 145678);
-                addLink.setLong(2, department.getID());
-                addLink.setLong(3, employee.getID());
-                addLink.executeUpdate();
+            if(department.getEmployees().size() != 0){
+                for(Employee employee : department.getEmployees()){
+                    addLink.setLong(1, UniqueID.generateID(addLink));
+                    addLink.setLong(2, department.getID());
+                    addLink.setLong(3, employee.getID());
+                    addLink.executeUpdate();
+                }
             }
 
             if(i==1 && j==1)

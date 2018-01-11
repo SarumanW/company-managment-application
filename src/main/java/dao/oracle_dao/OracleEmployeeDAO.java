@@ -6,6 +6,7 @@ import dao.dao_interface.EmployeeDAO;
 import dao.oracle_dao.OracleDepartmentDAO;
 import domain.Department;
 import domain.Employee;
+import generator.UniqueID;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class OracleEmployeeDAO implements EmployeeDAO {
 
     public OracleEmployeeDAO(){
         oracleConnection = new OracleConnection();
-        oracleDepartmentDAO = new OracleDepartmentDAO();
+        oracleDepartmentDAO = new OracleDepartmentDAO(this);
     }
 
     private Employee extractEmployeeFromResultSet(ResultSet resultSet) throws SQLException {
@@ -64,7 +65,7 @@ public class OracleEmployeeDAO implements EmployeeDAO {
             addSalary.setDouble(1,employee.getSalary());
             addSalary.setLong(2, employee.getID());
 
-            addLink.setLong(1, employee.getID()%13);
+            addLink.setLong(1, UniqueID.generateID(addLink));
             addLink.setLong(2, employee.getDepartment().getID());
             addLink.setLong(3, employee.getID());
 

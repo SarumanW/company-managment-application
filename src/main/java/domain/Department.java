@@ -12,7 +12,7 @@ public class Department {
 
     public Department(){
         this.setID(UniqueID.generateID(this));
-        employees = new ArrayList<Employee>();
+        employees = new ArrayList<>();
     }
 
     public Department(String name){

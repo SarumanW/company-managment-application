@@ -58,4 +58,14 @@ public class Task {
         this.employees.add(employee);
         employee.addTask(this);
     }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "taskID=" + taskID +
+                ", name='" + name + '\'' +
+                ", estimate=" + estimate +
+                ", employees=" + employees +
+                '}';
+    }
 }

@@ -13,6 +13,20 @@ public class Employee {
     private Department department;
     private List<Task> taskList;
 
+    public Employee(){
+        this.setID(UniqueID.generateID(this));
+        taskList = new ArrayList<>();
+        department = new Department();
+    }
+
+    public Employee(String name, String surname, double salary, Department department){
+        this();
+        this.setName(name);
+        this.setSurname(surname);
+        this.setSalary(salary);
+        this.setDepartment(department);
+        department.getEmployees().add(this);
+    }
     public Department getDepartment() {
         return department;
     }
@@ -21,17 +35,7 @@ public class Employee {
         this.department = department;
     }
 
-    public Employee(){
-        this.setID(UniqueID.generateID(this));
-        taskList = new ArrayList<>();
-    }
 
-    public Employee(String name, String surname, double salary){
-        this();
-        this.setName(name);
-        this.setSurname(surname);
-        this.setSalary(salary);
-    }
 
     public String getName() {
         return name;
