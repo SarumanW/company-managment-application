@@ -23,16 +23,15 @@ public class OracleTaskDAO implements TaskDAO {
 
     private Task extractTaskFromResultSet(ResultSet resultSet) throws SQLException {
         Task task = new Task();
-        task.setTaskID(resultSet.getLong(2));
 
         while(resultSet.next()){
             int i = resultSet.getInt(1);
             switch(i){
-                case 110:
-                    task.setName(resultSet.getString(3));
+                case 114:
+                    task.setName(resultSet.getString(4));
                     break;
-                case 111:
-                    task.setEstimate(resultSet.getLong(4));
+                case 115:
+                    task.setEstimate(resultSet.getLong(3));
                     break;
             }
         }
@@ -47,7 +46,7 @@ public class OracleTaskDAO implements TaskDAO {
             PreparedStatement addObject = connection.prepareStatement("insert into OBJECTS (OBJECT_ID, NAME, TYPE_ID) values (?, ?, 7)");
             PreparedStatement addName = connection.prepareStatement("insert into PARAMS (text_value, object_id, attribute_id) values (?, ?, 114)");
             PreparedStatement addEstimate = connection.prepareStatement("insert into PARAMS (number_value, object_id, attribute_id) values (?, ?, 115)");
-            PreparedStatement addLink = connection.prepareStatement("insert into LINKS (link_id, parent_id, child_id, link_type_id) values (?, ?, ?, 155)");
+            PreparedStatement addLinkEmp = connection.prepareStatement("insert into LINKS (link_id, parent_id, child_id, link_type_id) values (?, ?, ?, 155)");
 
             addObject.setLong(1, task.getTaskID());
             addObject.setString(2, task.getName());
@@ -58,26 +57,17 @@ public class OracleTaskDAO implements TaskDAO {
             addEstimate.setLong(1, task.getEstimate());
             addEstimate.setLong(2, task.getTaskID());
 
-//            StringBuffer linkQuery = new StringBuffer();
-//            for(int i = 0; i < task.getEmployees().size(); i++){
-//                Employee employee = task.getEmployees().get(i);
-//                linkQuery.append("insert into LINKS (link_id, parent_id, child_id, link_type_id) values ("
-//                        + UniqueID.generateID(employee) +
-//                        "," + task.getTaskID() +
-//                        "," + employee.getID() + "155);");
-//            }
-
-            if(task.getEmployees().size() != 0){
-                for(Employee employee : task.getEmployees()){
-                    addLink.setLong(1, UniqueID.generateID(addLink));
-                    addLink.setLong(2, employee.getID());
-                    addLink.setLong(3, task.getTaskID());
-                    addLink.executeUpdate();
-                }
-            }
-
             int i = addObject.executeUpdate();
             int j = addName.executeUpdate();
+
+            if(task.getEmployees().size() != 0){
+                for(Long employee : task.getEmployees()){
+                    addLinkEmp.setLong(1, UniqueID.generateID(new Object()));
+                    addLinkEmp.setLong(2, employee);
+                    addLinkEmp.setLong(3, task.getTaskID());
+                    addLinkEmp.executeUpdate();
+                }
+            }
 
             if(i==1 && j==1)
                 return true;
@@ -97,13 +87,13 @@ public class OracleTaskDAO implements TaskDAO {
             return task;
 
         Connection connection = oracleConnection.getConnection();
-        List<Employee> employees = new ArrayList<>();
+        List<Long> employees = new ArrayList<>();
 
         try {
             Statement statement = connection.createStatement();
             Statement employStatement = connection.createStatement();
 
-            ResultSet resultSet = statement.executeQuery("select attr.ATTRIBUTE_ID, o.object_id, p.text_value, p.NUMBER_VALUE\n" +
+            ResultSet resultSet = statement.executeQuery("select attr.ATTRIBUTE_ID, o.object_id, p.NUMBER_VALUE, p.TEXT_VALUE\n" +
                     "from objects o\n" +
                     "inner join attributes attr on attr.type_id = o.TYPE_ID\n" +
                     "left join params p on p.ATTRIBUTE_ID = attr.ATTRIBUTE_ID\n" +
@@ -121,9 +111,10 @@ public class OracleTaskDAO implements TaskDAO {
                     "    AND T.OBJECT_ID =" + key);
 
             task = extractTaskFromResultSet(resultSet);
+            task.setTaskID(key);
 
             while(employSet.next())
-                employees.add(oracleEmployeeDAO.findEmployee(employSet.getLong(1)));
+                employees.add(employSet.getLong(1));
 
             task.setEmployees(employees);
 
@@ -140,8 +131,8 @@ public class OracleTaskDAO implements TaskDAO {
         Connection connection = oracleConnection.getConnection();
 
         try {
-            PreparedStatement updateName = connection.prepareStatement("update params set text_value = ? where object_id = ? and attribute_id = 110");
-            PreparedStatement updateEstimate = connection.prepareStatement("update params set number_value = ? where object_id = ? and attribute_id = 110");
+            PreparedStatement updateName = connection.prepareStatement("update params set text_value = ? where object_id = ? and attribute_id = 114");
+            PreparedStatement updateEstimate = connection.prepareStatement("update params set number_value = ? where object_id = ? and attribute_id = 115");
 
             updateName.setString(1, task.getName());
             updateName.setLong(2, task.getTaskID());

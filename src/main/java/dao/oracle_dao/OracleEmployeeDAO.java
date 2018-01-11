@@ -23,6 +23,7 @@ public class OracleEmployeeDAO implements EmployeeDAO {
 
     private Employee extractEmployeeFromResultSet(ResultSet resultSet) throws SQLException {
         Employee employee = new Employee();
+        resultSet.next();
         employee.setID(resultSet.getLong(2));
 
         while(resultSet.next()){
@@ -66,7 +67,7 @@ public class OracleEmployeeDAO implements EmployeeDAO {
             addSalary.setLong(2, employee.getID());
 
             addLink.setLong(1, UniqueID.generateID(addLink));
-            addLink.setLong(2, employee.getDepartment().getID());
+            addLink.setLong(2, employee.getDepartment());
             addLink.setLong(3, employee.getID());
 
             int i = addObject.executeUpdate();
@@ -93,7 +94,7 @@ public class OracleEmployeeDAO implements EmployeeDAO {
             return employee;
 
         Connection connection = oracleConnection.getConnection();
-        Department department;
+        long department;
 
         try {
             Statement statement = connection.createStatement();
@@ -114,10 +115,11 @@ public class OracleEmployeeDAO implements EmployeeDAO {
                     "INNER JOIN TYPES OT ON E.TYPE_ID = OT.TYPE_ID\n" +
                     "WHERE OT.TYPE_ID = 2\n" +
                     "AND LT.LINK_TYPE_ID = 150\n" +
-                    "AND E.OBJECT_ID = " + employee.getID());
+                    "AND E.OBJECT_ID = " + key);
 
             employee = extractEmployeeFromResultSet(resultSet);
-            department = oracleDepartmentDAO.findDepartment(departSet.getLong(1));
+            departSet.next();
+            department = departSet.getLong(1);
             employee.setDepartment(department);
 
         } catch (SQLException e) {
@@ -144,7 +146,7 @@ public class OracleEmployeeDAO implements EmployeeDAO {
             updateSurname.setString(1, employee.getSurname());
             updateSurname.setLong(2, employee.getID());
 
-            updateDepartment.setLong(1, employee.getDepartment().getID());
+            updateDepartment.setLong(1, employee.getDepartment());
             updateDepartment.setLong(2, employee.getID());
 
             updateSalary.setDouble(1, employee.getSalary());

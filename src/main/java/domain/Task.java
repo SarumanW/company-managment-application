@@ -9,7 +9,7 @@ public class Task {
     private long taskID;
     private String name;
     private long estimate;
-    private List<Employee> employees;
+    private List<Long> employees;
 
     public Task(){
         this.setTaskID(UniqueID.generateID(this));
@@ -46,17 +46,17 @@ public class Task {
         this.estimate = estimate;
     }
 
-    public List<Employee> getEmployees() {
+    public List<Long> getEmployees() {
         return employees;
     }
 
-    public void setEmployees(List<Employee> employees) {
+    public void setEmployees(List<Long> employees) {
         this.employees = employees;
     }
 
-    public void addEmployee(Employee employee){
+    public void addEmployee(Long employee){
         this.employees.add(employee);
-        employee.addTask(this);
+        //employee.addTask(this);
     }
 
     @Override

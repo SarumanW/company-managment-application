@@ -8,7 +8,7 @@ import java.util.List;
 public class Department {
     private long ID;
     private String name;
-    private List<Employee> employees;
+    private List<Long> employees;
 
     public Department(){
         this.setID(UniqueID.generateID(this));
@@ -20,11 +20,11 @@ public class Department {
         this.name = name;
     }
 
-    public List<Employee> getEmployees() {
+    public List<Long> getEmployees() {
         return employees;
     }
 
-    public void setEmployees(List<Employee> employees) {
+    public void setEmployees(List<Long> employees) {
         this.employees = employees;
     }
 
@@ -46,11 +46,10 @@ public class Department {
 
     @Override
     public String toString() {
-        String s = ID + " " + name + " employees: \n";
-        for(Employee employee : employees){
-            s+=employee.toString();
-            s+="\n";
-        }
-        return s;
+        return "Department{" +
+                "ID=" + ID +
+                ", name='" + name + '\'' +
+                ", employees=" + employees +
+                '}';
     }
 }

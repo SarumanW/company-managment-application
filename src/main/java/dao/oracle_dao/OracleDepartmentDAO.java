@@ -27,6 +27,7 @@ public class OracleDepartmentDAO implements DepartmentDAO {
 
     private Department extractDepartmentFromResultSet(ResultSet resultSet) throws SQLException {
         Department department = new Department();
+        resultSet.next();
         department.setID(resultSet.getLong(2));
 
         while(resultSet.next()){
@@ -59,10 +60,10 @@ public class OracleDepartmentDAO implements DepartmentDAO {
             int j = addName.executeUpdate();
 
             if(department.getEmployees().size() != 0){
-                for(Employee employee : department.getEmployees()){
-                    addLink.setLong(1, UniqueID.generateID(addLink));
+                for(long employee : department.getEmployees()){
+                    addLink.setLong(1, UniqueID.generateID(new Object()));
                     addLink.setLong(2, department.getID());
-                    addLink.setLong(3, employee.getID());
+                    addLink.setLong(3, employee);
                     addLink.executeUpdate();
                 }
             }
@@ -84,7 +85,7 @@ public class OracleDepartmentDAO implements DepartmentDAO {
             return department;
 
         Connection connection = oracleConnection.getConnection();
-        List<Employee> employees = new ArrayList<>();
+        List<Long> employees = new ArrayList<>();
 
         try {
             Statement departmentStat = connection.createStatement();
@@ -109,9 +110,8 @@ public class OracleDepartmentDAO implements DepartmentDAO {
 
             department = extractDepartmentFromResultSet(resultSet);
 
-
             while(employeeSet.next()){
-                Employee employee = oracleEmployeeDAO.findEmployee(employeeSet.getLong(1));
+                long employee = employeeSet.getLong(1);
                 employees.add(employee);
             }
             department.setEmployees(employees);

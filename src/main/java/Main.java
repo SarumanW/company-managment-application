@@ -23,24 +23,26 @@ public class Main {
         EmployeeDAO employeeDAO = daoFactory.getEmployeeDAO();
         DepartmentDAO departmentDAO = daoFactory.getDepartmentDAO();
 
-        Department department = new Department("PaintingDep");
+//        Department department = new Department("PaintingDep");
+//
+//        departmentDAO.insertDepartment(department);
+//
+//        Employee employee1 = new Employee("Leila", "Kentuki", 5000, department);
+//        Employee employee2 = new Employee("Mary", "MacDonald", 6000, department);
+//
+//        employeeDAO.insertEmployee(employee1);
+//        employeeDAO.insertEmployee(employee2);
+//
+//        Task task = new Task("Creating picture", 40000);
+//        task.addEmployee(employee1);
+//        task.addEmployee(employee2);
+//
+//        taskDAO.insertTask(task);
 
-        departmentDAO.insertDepartment(department);
-
-        Employee employee1 = new Employee("Leila", "Kentuki", 5000, department);
-        Employee employee2 = new Employee("Mary", "MacDonald", 6000, department);
-
-        employeeDAO.insertEmployee(employee1);
-        employeeDAO.insertEmployee(employee2);
-
-        Task task = new Task("Creating picture", 40000);
-        task.addEmployee(employee1);
-        task.addEmployee(employee2);
-
-        taskDAO.insertTask(task);
+        Task task = taskDAO.findTask(19);
 
 //        System.out.println(department);
-//        System.out.println(task);
+        System.out.println(task);
     }
 
 }

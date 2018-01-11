@@ -10,32 +10,29 @@ public class Employee {
     private String name;
     private String surname;
     private double salary;
-    private Department department;
-    private List<Task> taskList;
+    private long departmentID;
+    private List<Long> taskList;
 
     public Employee(){
         this.setID(UniqueID.generateID(this));
         taskList = new ArrayList<>();
-        department = new Department();
     }
 
-    public Employee(String name, String surname, double salary, Department department){
+    public Employee(String name, String surname, double salary, long departmentID){
         this();
         this.setName(name);
         this.setSurname(surname);
         this.setSalary(salary);
-        this.setDepartment(department);
-        department.getEmployees().add(this);
+        this.setDepartment(departmentID);
+        //department.getEmployees().add(this);
     }
-    public Department getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(Department department) {
-        this.department = department;
+    public long getDepartment() {
+        return departmentID;
     }
 
-
+    public void setDepartment(long departmentID) {
+        this.departmentID = departmentID;
+    }
 
     public String getName() {
         return name;
@@ -69,21 +66,27 @@ public class Employee {
         this.salary = salary;
     }
 
-    public List<Task> getTaskList() {
+    public List<Long> getTaskList() {
         return taskList;
     }
 
-    public void setTaskList(List<Task> taskList) {
+    public void setTaskList(List<Long> taskList) {
         this.taskList = taskList;
+    }
+
+    public void addTask(Task task){
+        //this.taskList.add(task);
     }
 
     @Override
     public String toString() {
-        String s = ID + " " + name + " " + surname + " " + department.getName();
-        return s;
-    }
-
-    public void addTask(Task task){
-        this.taskList.add(task);
+        return "Employee{" +
+                "ID=" + ID +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", salary=" + salary +
+                ", departmentID=" + departmentID +
+                ", taskList=" + taskList +
+                '}';
     }
 }
