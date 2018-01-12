@@ -49,6 +49,7 @@ public class OracleEmployeeDAO implements EmployeeDAO {
             PreparedStatement addSurname = connection.prepareStatement("insert into PARAMS (text_value, number_value, object_id, attribute_id) values (?, NULL, ?, 103)");
             PreparedStatement addSalary = connection.prepareStatement("insert into PARAMS (text_value, number_value, object_id, attribute_id) values (NULL, ?, ?, 104)");
             PreparedStatement addLink = connection.prepareStatement("insert into LINKS (link_id, parent_id, child_id, link_type_id) values (?, ?, ?, 150)");
+            PreparedStatement addTask = connection.prepareStatement("insert into LINKS (link_id, parent_id, child_id, link_type_id) values (?, ?, ?, 155)");
 
             addObject.setLong(1, employee.getID());
             addObject.setString(2, employee.getSurname());
@@ -72,6 +73,15 @@ public class OracleEmployeeDAO implements EmployeeDAO {
             int z = addSalary.executeUpdate();
             int s = addLink.executeUpdate();
 
+            if(employee.getTaskList().size() != 0){
+                for(long taskID : employee.getTaskList()){
+                    addTask.setLong(1, UniqueID.generateID(new Object()));
+                    addTask.setLong(2, employee.getID());
+                    addTask.setLong(3, taskID);
+                    addTask.executeUpdate();
+                }
+            }
+
             if(i==1 && j==1 && k==1 && s==1 && z==1)
                 return true;
 
@@ -91,10 +101,12 @@ public class OracleEmployeeDAO implements EmployeeDAO {
 
         Connection connection = oracleConnection.getConnection();
         long department;
+        List<Long> tasks = new ArrayList<>();
 
         try {
             Statement statement = connection.createStatement();
             Statement departStat = connection.createStatement();
+            Statement taskStat = connection.createStatement();
 
             ResultSet resultSet = statement.executeQuery("select attr.ATTRIBUTE_ID, o.object_id, p.text_value, p.NUMBER_VALUE\n" +
                     "from objects o\n" +
@@ -113,11 +125,28 @@ public class OracleEmployeeDAO implements EmployeeDAO {
                     "AND LT.LINK_TYPE_ID = 150\n" +
                     "AND E.OBJECT_ID = " + key);
 
+            ResultSet taskSet = taskStat.executeQuery("SELECT D.OBJECT_ID, D.NAME\n" +
+                    "FROM Objects D\n" +
+                    "INNER JOIN LINKS L ON L.PARENT_ID = D.OBJECT_ID\n" +
+                    "INNER JOIN LINKTYPES LT ON L.LINK_TYPE_ID = LT.LINK_TYPE_ID\n" +
+                    "INNER JOIN OBJECTS E ON L.CHILD_ID = E.OBJECT_ID\n" +
+                    "INNER JOIN TYPES OT ON E.TYPE_ID = OT.TYPE_ID\n" +
+                    "WHERE OT.TYPE_ID = 2\n" +
+                    "AND LT.LINK_TYPE_ID = 155\n" +
+                    "AND E.OBJECT_ID = " + key);
+
             employee = extractEmployeeFromResultSet(resultSet);
             employee.setID(key);
             departSet.next();
             department = departSet.getLong(1);
             employee.setDepartment(department);
+
+            while(taskSet.next()){
+                long taskID = taskSet.getLong(1);
+                tasks.add(taskID);
+            }
+
+            employee.setTaskList(tasks);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -136,6 +165,7 @@ public class OracleEmployeeDAO implements EmployeeDAO {
             PreparedStatement updateSurname = connection.prepareStatement("update params set text_value = ? where object_id = ? and attribute_id = 103");
             PreparedStatement updateSalary = connection.prepareStatement("update params set number_value = ? where object_id = ? and attribute_id = 104");
             PreparedStatement updateDepartment = connection.prepareStatement("update links set parent_id = ? where child_id = ? and link_type_id = 150");
+            PreparedStatement updateTask = connection.prepareStatement("update links set parent_id = ? where child_id = ? and link_type_id = 155");
 
             updateName.setString(1, employee.getName());
             updateName.setLong(2, employee.getID());
@@ -153,6 +183,12 @@ public class OracleEmployeeDAO implements EmployeeDAO {
             int j = updateSurname.executeUpdate();
             int k = updateDepartment.executeUpdate();
             int z = updateSalary.executeUpdate();
+
+            for(Long taskID : employee.getTaskList()){
+                updateTask.setLong(1, employee.getID());
+                updateTask.setLong(2, taskID);
+                updateTask.executeUpdate();
+            }
 
             if(i==1 && j==1 && k==1 && z==1)
                 return true;
