@@ -13,22 +13,13 @@ import java.util.List;
 
 public class OracleDepartmentDAO implements DepartmentDAO {
     private OracleConnection oracleConnection;
-    private OracleEmployeeDAO oracleEmployeeDAO;
 
     public OracleDepartmentDAO(){
         oracleConnection = new OracleConnection();
-        //oracleEmployeeDAO = new OracleEmployeeDAO();
-    }
-
-    public OracleDepartmentDAO(OracleEmployeeDAO oracleEmployeeDAO){
-        this();
-        this.oracleEmployeeDAO = oracleEmployeeDAO;
     }
 
     private Department extractDepartmentFromResultSet(ResultSet resultSet) throws SQLException {
         Department department = new Department();
-        resultSet.next();
-        department.setID(resultSet.getLong(2));
 
         while(resultSet.next()){
             int i = resultSet.getInt(1);
@@ -109,6 +100,7 @@ public class OracleDepartmentDAO implements DepartmentDAO {
                     "    AND D.object_id = " + key);
 
             department = extractDepartmentFromResultSet(resultSet);
+            department.setID(key);
 
             while(employeeSet.next()){
                 long employee = employeeSet.getLong(1);
@@ -130,12 +122,18 @@ public class OracleDepartmentDAO implements DepartmentDAO {
 
         try {
             PreparedStatement updateName = connection.prepareStatement("update params set text_value = ? where object_id = ? and attribute_id = 101");
+            PreparedStatement updateEmployee = connection.prepareStatement("update links set parent_id = ? where child_id = ? and link_type_id = 150");
 
             updateName.setString(1, department.getName());
             updateName.setLong(2, department.getID());
 
-
             int i = updateName.executeUpdate();
+
+            for(Long employeeID : department.getEmployees()){
+                updateEmployee.setLong(1, department.getID());
+                updateEmployee.setLong(2, employeeID);
+                updateEmployee.executeUpdate();
+            }
 
             if(i==1)
                 return true;

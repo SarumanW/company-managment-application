@@ -133,6 +133,7 @@ public class OracleTaskDAO implements TaskDAO {
         try {
             PreparedStatement updateName = connection.prepareStatement("update params set text_value = ? where object_id = ? and attribute_id = 114");
             PreparedStatement updateEstimate = connection.prepareStatement("update params set number_value = ? where object_id = ? and attribute_id = 115");
+            PreparedStatement updateEmployee = connection.prepareStatement("update links set parent_id = ? where child_id = ? and link_type_id = 155");
 
             updateName.setString(1, task.getName());
             updateName.setLong(2, task.getTaskID());
@@ -142,6 +143,12 @@ public class OracleTaskDAO implements TaskDAO {
 
             int i = updateName.executeUpdate();
             int j = updateEstimate.executeUpdate();
+
+            for(Long employeeID : task.getEmployees()){
+                updateEmployee.setLong(1, employeeID);
+                updateEmployee.setLong(2, task.getTaskID());
+                updateEmployee.executeUpdate();
+            }
 
             if(i==1 && j==1)
                 return true;
@@ -161,9 +168,8 @@ public class OracleTaskDAO implements TaskDAO {
             int i = statement.executeUpdate("delete from params where object_id = " + key);
             int j = statement.executeUpdate("delete from objects where object_id = " + key);
             int k = statement.executeUpdate("delete from links where child_id = " + key);
-            int s = statement.executeUpdate("delete from links where parent_id = " + key);
 
-            if(i==1 && j==1 && k==1 && s==1)
+            if(i==1 && j==1 && k==1)
                 return true;
 
         } catch (SQLException e) {

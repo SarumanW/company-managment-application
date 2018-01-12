@@ -14,17 +14,13 @@ import java.util.List;
 
 public class OracleEmployeeDAO implements EmployeeDAO {
     private OracleConnection oracleConnection;
-    private OracleDepartmentDAO oracleDepartmentDAO;
 
     public OracleEmployeeDAO(){
         oracleConnection = new OracleConnection();
-        oracleDepartmentDAO = new OracleDepartmentDAO(this);
     }
 
     private Employee extractEmployeeFromResultSet(ResultSet resultSet) throws SQLException {
         Employee employee = new Employee();
-        resultSet.next();
-        employee.setID(resultSet.getLong(2));
 
         while(resultSet.next()){
             int i = resultSet.getInt(1);
@@ -118,6 +114,7 @@ public class OracleEmployeeDAO implements EmployeeDAO {
                     "AND E.OBJECT_ID = " + key);
 
             employee = extractEmployeeFromResultSet(resultSet);
+            employee.setID(key);
             departSet.next();
             department = departSet.getLong(1);
             employee.setDepartment(department);

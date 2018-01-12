@@ -18,13 +18,13 @@ public class Employee {
         taskList = new ArrayList<>();
     }
 
-    public Employee(String name, String surname, double salary, long departmentID){
+    public Employee(String name, String surname, double salary, Department department){
         this();
         this.setName(name);
         this.setSurname(surname);
         this.setSalary(salary);
-        this.setDepartment(departmentID);
-        //department.getEmployees().add(this);
+        this.setDepartment(department.getID());
+        department.getEmployees().add(this.getID());
     }
     public long getDepartment() {
         return departmentID;
@@ -75,7 +75,7 @@ public class Employee {
     }
 
     public void addTask(Task task){
-        //this.taskList.add(task);
+        this.taskList.add(task.getTaskID());
     }
 
     @Override

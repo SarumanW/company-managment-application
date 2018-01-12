@@ -54,9 +54,9 @@ public class Task {
         this.employees = employees;
     }
 
-    public void addEmployee(Long employee){
-        this.employees.add(employee);
-        //employee.addTask(this);
+    public void addEmployee(Employee employee){
+        this.employees.add(employee.getID());
+        employee.addTask(this);
     }
 
     @Override

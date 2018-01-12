@@ -39,10 +39,12 @@ public class Main {
 //
 //        taskDAO.insertTask(task);
 
-        Task task = taskDAO.findTask(19);
+//        Task task = taskDAO.findTask(19);
+//        task.setEstimate(800);
+//        taskDAO.updateTask(task);
 
 //        System.out.println(department);
-        System.out.println(task);
+//        System.out.println(task);
     }
 
 }
