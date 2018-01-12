@@ -125,11 +125,11 @@ public class OracleEmployeeDAO implements EmployeeDAO {
                     "AND LT.LINK_TYPE_ID = 150\n" +
                     "AND E.OBJECT_ID = " + key);
 
-            ResultSet taskSet = taskStat.executeQuery("SELECT D.OBJECT_ID, D.NAME\n" +
-                    "FROM Objects D\n" +
-                    "INNER JOIN LINKS L ON L.PARENT_ID = D.OBJECT_ID\n" +
+            ResultSet taskSet = taskStat.executeQuery("SELECT T.OBJECT_ID, T.NAME\n" +
+                    "FROM Objects T\n" +
+                    "INNER JOIN LINKS L ON L.CHILD_ID = T.OBJECT_ID\n" +
                     "INNER JOIN LINKTYPES LT ON L.LINK_TYPE_ID = LT.LINK_TYPE_ID\n" +
-                    "INNER JOIN OBJECTS E ON L.CHILD_ID = E.OBJECT_ID\n" +
+                    "INNER JOIN OBJECTS E ON L.PARENT_ID = E.OBJECT_ID\n" +
                     "INNER JOIN TYPES OT ON E.TYPE_ID = OT.TYPE_ID\n" +
                     "WHERE OT.TYPE_ID = 2\n" +
                     "AND LT.LINK_TYPE_ID = 155\n" +

@@ -14,11 +14,9 @@ import java.util.List;
 
 public class OracleTaskDAO implements TaskDAO {
     private OracleConnection oracleConnection;
-    private OracleEmployeeDAO oracleEmployeeDAO;
 
     public OracleTaskDAO(){
         oracleConnection = new OracleConnection();
-        oracleEmployeeDAO = new OracleEmployeeDAO();
     }
 
     private Task extractTaskFromResultSet(ResultSet resultSet) throws SQLException {
@@ -47,6 +45,7 @@ public class OracleTaskDAO implements TaskDAO {
             PreparedStatement addName = connection.prepareStatement("insert into PARAMS (text_value, object_id, attribute_id) values (?, ?, 114)");
             PreparedStatement addEstimate = connection.prepareStatement("insert into PARAMS (number_value, object_id, attribute_id) values (?, ?, 115)");
             PreparedStatement addLinkEmp = connection.prepareStatement("insert into LINKS (link_id, parent_id, child_id, link_type_id) values (?, ?, ?, 155)");
+            PreparedStatement addLinkSpr = connection.prepareStatement("insert into LINKS (link_id, parent_id, child_id, link_type_id) values (?, ?, ?, 154)");
 
             addObject.setLong(1, task.getTaskID());
             addObject.setString(2, task.getName());
@@ -57,8 +56,13 @@ public class OracleTaskDAO implements TaskDAO {
             addEstimate.setLong(1, task.getEstimate());
             addEstimate.setLong(2, task.getTaskID());
 
+            addLinkSpr.setLong(1, UniqueID.generateID(new Object()));
+            addLinkSpr.setLong(2, task.getSprint());
+            addLinkSpr.setLong(3, task.getTaskID());
+
             int i = addObject.executeUpdate();
             int j = addName.executeUpdate();
+            int k = addLinkSpr.executeUpdate();
 
             if(task.getEmployees().size() != 0){
                 for(Long employee : task.getEmployees()){
@@ -69,7 +73,7 @@ public class OracleTaskDAO implements TaskDAO {
                 }
             }
 
-            if(i==1 && j==1)
+            if(i==1 && j==1 && k==1)
                 return true;
 
         } catch (SQLException e) {
@@ -92,6 +96,7 @@ public class OracleTaskDAO implements TaskDAO {
         try {
             Statement statement = connection.createStatement();
             Statement employStatement = connection.createStatement();
+            Statement sprintStatement = connection.createStatement();
 
             ResultSet resultSet = statement.executeQuery("select attr.ATTRIBUTE_ID, o.object_id, p.NUMBER_VALUE, p.TEXT_VALUE\n" +
                     "from objects o\n" +
@@ -110,8 +115,20 @@ public class OracleTaskDAO implements TaskDAO {
                     "    AND LT.LINK_TYPE_ID = 155\n" +
                     "    AND T.OBJECT_ID =" + key);
 
+            ResultSet sprintSet = sprintStatement.executeQuery("SELECT S.OBJECT_ID, S.NAME\n" +
+                    "   FROM Objects S\n" +
+                    "    INNER JOIN LINKS L ON L.PARENT_ID = S.OBJECT_ID\n" +
+                    "    INNER JOIN LINKTYPES LT ON L.LINK_TYPE_ID = LT.LINK_TYPE_ID\n" +
+                    "    INNER JOIN OBJECTS T ON L.CHILD_ID = T.OBJECT_ID\n" +
+                    "    INNER JOIN TYPES OT ON T.TYPE_ID = OT.TYPE_ID\n" +
+                    "    WHERE OT.TYPE_ID = 7\n" +
+                    "    AND LT.LINK_TYPE_ID = 154\n" +
+                    "    AND T.OBJECT_ID =" + key);
+
             task = extractTaskFromResultSet(resultSet);
             task.setTaskID(key);
+            sprintSet.next();
+            task.setSprint(sprintSet.getLong(1));
 
             while(employSet.next())
                 employees.add(employSet.getLong(1));
@@ -134,6 +151,7 @@ public class OracleTaskDAO implements TaskDAO {
             PreparedStatement updateName = connection.prepareStatement("update params set text_value = ? where object_id = ? and attribute_id = 114");
             PreparedStatement updateEstimate = connection.prepareStatement("update params set number_value = ? where object_id = ? and attribute_id = 115");
             PreparedStatement updateEmployee = connection.prepareStatement("update links set parent_id = ? where child_id = ? and link_type_id = 155");
+            PreparedStatement updateSprint = connection.prepareStatement("update links set parent_id = ? where child_id = ? and link_type_id = 154");
 
             updateName.setString(1, task.getName());
             updateName.setLong(2, task.getTaskID());
@@ -141,8 +159,12 @@ public class OracleTaskDAO implements TaskDAO {
             updateEstimate.setLong(1, task.getEstimate());
             updateEstimate.setLong(2, task.getTaskID());
 
+            updateSprint.setLong(1, task.getSprint());
+            updateSprint.setLong(2, task.getTaskID());
+
             int i = updateName.executeUpdate();
             int j = updateEstimate.executeUpdate();
+            int k = updateSprint.executeUpdate();
 
             for(Long employeeID : task.getEmployees()){
                 updateEmployee.setLong(1, employeeID);
@@ -150,7 +172,7 @@ public class OracleTaskDAO implements TaskDAO {
                 updateEmployee.executeUpdate();
             }
 
-            if(i==1 && j==1)
+            if(i==1 && j==1 && k==1)
                 return true;
 
         } catch (SQLException e) {

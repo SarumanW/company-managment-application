@@ -10,16 +10,21 @@ public class Task {
     private String name;
     private long estimate;
     private List<Long> employees;
+    private long sprint;
 
     public Task(){
         this.setTaskID(UniqueID.generateID(this));
         employees = new ArrayList<>();
     }
 
-    public Task(String name, long estimate){
+    public Task(String name, long estimate, Employee employee, Sprint sprint){
         this();
         this.name = name;
         this.estimate = estimate;
+        this.employees.add(employee.getID());
+        employee.getTaskList().add(this.getTaskID());
+        this.sprint = sprint.getSprintID();
+        sprint.getTaskList().add(this.getTaskID());
     }
 
     public long getTaskID() {
@@ -57,6 +62,14 @@ public class Task {
     public void addEmployee(Employee employee){
         this.employees.add(employee.getID());
         employee.addTask(this);
+    }
+
+    public long getSprint() {
+        return sprint;
+    }
+
+    public void setSprint(long sprint) {
+        this.sprint = sprint;
     }
 
     @Override
