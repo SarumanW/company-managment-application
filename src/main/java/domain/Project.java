@@ -1,11 +1,10 @@
 package domain;
 
+import generator.UniqueID;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
 public class Project {
     private long projectID;
@@ -17,11 +16,13 @@ public class Project {
     private List<Long> sprintList;
 
     public Project() {
+        this.setProjectID(UniqueID.generateID(this));
         start = Calendar.getInstance();
         end = new GregorianCalendar();
+        sprintList = new ArrayList<>();
     }
 
-    public Project(long projectID, Date endDate){
+    public Project(Date endDate){
         this();
         end = new GregorianCalendar();
         end.setTime(endDate);

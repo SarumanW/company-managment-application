@@ -10,7 +10,7 @@ public class Manager {
     private String name;
     private String surname;
     private double salary;
-    private List<Project> projectList;
+    private List<Long> projectList;
 
     public Manager(){
         this.setID(UniqueID.generateID(this));
@@ -56,11 +56,11 @@ public class Manager {
         this.salary = salary;
     }
 
-    public List<Project> getProjectList() {
+    public List<Long> getProjectList() {
         return projectList;
     }
 
-    public void setProjectList(List<Project> projectList) {
+    public void setProjectList(List<Long> projectList) {
         this.projectList = projectList;
     }
 

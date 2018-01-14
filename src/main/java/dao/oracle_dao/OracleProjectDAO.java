@@ -207,7 +207,7 @@ public class OracleProjectDAO implements ProjectDAO {
 
             if(i==1 && j==1 && k==1 && s==1 && l==1)
                 return true;
-            
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -232,6 +232,7 @@ public class OracleProjectDAO implements ProjectDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return false;
     }
 }
