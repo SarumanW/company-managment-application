@@ -75,7 +75,6 @@ public class OracleSprintDAO implements SprintDAO{
 
         Connection connection = oracleConnection.getConnection();
         List<Long> tasks = new ArrayList<>();
-        long projectID;
 
         try {
             Statement statement = connection.createStatement();
@@ -110,6 +109,7 @@ public class OracleSprintDAO implements SprintDAO{
                     "AND S.OBJECT_ID = " + key);
 
             sprint = extractSprintFromResultSet(resultSet);
+            sprint.setSprintID(key);
             projectSet.next();
             sprint.setProjectID(projectSet.getLong(1));
 

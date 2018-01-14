@@ -4,6 +4,7 @@ import caching.SingletonCache;
 import connections.OracleConnection;
 import dao.dao_interface.ProjectDAO;
 import domain.*;
+import generator.UniqueID;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,13 +12,9 @@ import java.util.List;
 
 public class OracleProjectDAO implements ProjectDAO {
     private OracleConnection oracleConnection = new OracleConnection();
-    private OracleManagerDAO oracleManagerDAO = new OracleManagerDAO();
-    private OracleCustomerDAO oracleCustomerDAO = new OracleCustomerDAO();
-    private OracleSprintDAO oracleSprintDAO = new OracleSprintDAO();
 
     private Project extractProjectFromResultSet(ResultSet resultSet) throws SQLException {
         Project project = new Project();
-        project.setProjectID(resultSet.getLong(2));
 
         while(resultSet.next()){
             int i = resultSet.getInt(1);
@@ -48,6 +45,7 @@ public class OracleProjectDAO implements ProjectDAO {
             PreparedStatement addEnd = connection.prepareStatement("insert into PARAMS (date_value, object_id, attribute_id) values (?, ?, 112)");
             PreparedStatement addManagerLink = connection.prepareStatement("insert into LINKS (link_id, parent_id, child_id, link_type_id) values (?, ?, ?, 151)");
             PreparedStatement addCustomerLink = connection.prepareStatement("insert into LINKS (link_id, parent_id, child_id, link_type_id) values (?, ?, ?, 152)");
+            PreparedStatement addSprintLink = connection.prepareStatement("insert into LINKS (link_id, parent_id, child_id, link_type_id) values (?, ?, ?, 153)");
 
             addObject.setLong(1, project.getProjectID());
             addObject.setString(2, project.getName());
@@ -61,24 +59,22 @@ public class OracleProjectDAO implements ProjectDAO {
             addEnd.setDate(1, (Date) project.getEnd().getTime());
             addEnd.setLong(2, project.getProjectID());
 
-            addManagerLink.setLong(1, project.getProjectID()%13);
-            addManagerLink.setLong(2, project.getManager().getID());
+            addManagerLink.setLong(1, UniqueID.generateID(new Object()));
+            addManagerLink.setLong(2, project.getManagerID());
             addManagerLink.setLong(3, project.getProjectID());
 
-            addCustomerLink.setLong(1, project.getProjectID()%17);
-            addCustomerLink.setLong(2, project.getCustomer().getCustomerID());
+            addCustomerLink.setLong(1, UniqueID.generateID(new Object()));
+            addCustomerLink.setLong(2, project.getCustomerID());
             addCustomerLink.setLong(3, project.getProjectID());
 
-            StringBuffer linkQuery = new StringBuffer();
-            for(int i = 0; i < project.getSprints().size(); i++){
-                Sprint sprint = project.getSprints().get(i);
-                linkQuery.append("insert into LINKS (link_id, parent_id, child_id, link_type_id) values ("
-                        + project.getProjectID()*project.getProjectID()%1273 +
-                        "," + project.getProjectID() +
-                        "," + sprint.getSprintID() + "153);");
+            if(project.getSprints().size() != 0){
+                for(long sprint : project.getSprints()){
+                    addSprintLink.setLong(1, UniqueID.generateID(new Object()));
+                    addSprintLink.setLong(2, project.getProjectID());
+                    addSprintLink.setLong(3, sprint);
+                    addSprintLink.executeUpdate();
+                }
             }
-
-            PreparedStatement linksStatement = connection.prepareStatement(linkQuery.toString());
 
             int i = addObject.executeUpdate();
             int j = addName.executeUpdate();
@@ -86,10 +82,10 @@ public class OracleProjectDAO implements ProjectDAO {
             int l = addEnd.executeUpdate();
             int s = addManagerLink.executeUpdate();
             int m = addCustomerLink.executeUpdate();
-            int z = linksStatement.executeUpdate();
 
-            if(i==1 && j==1 && k==1 && l==1 && s==1 && m==1 && z==1)
+            if(i==1 && j==1 && k==1 && l==1 && s==1 && m==1)
                 return true;
+
         } catch (SQLException e){
             e.printStackTrace();
         }
@@ -105,9 +101,7 @@ public class OracleProjectDAO implements ProjectDAO {
             return project;
 
         Connection connection = oracleConnection.getConnection();
-        Manager manager;
-        Customer customer;
-        List<Sprint> sprints = new ArrayList<>();
+        List<Long> sprints = new ArrayList<>();
 
         try {
             Statement statement = connection.createStatement();
@@ -153,13 +147,14 @@ public class OracleProjectDAO implements ProjectDAO {
                     "    AND P.OBJECT_ID = " + key);
 
             project = extractProjectFromResultSet(resultSet);
-            manager = oracleManagerDAO.findManager(managSet.getLong(1));
-            customer = oracleCustomerDAO.findCustomer(custSet.getLong(1));
-            project.setManager(manager);
-            project.setCustomer(customer);
+            project.setProjectID(key);
+            managSet.next();
+            custSet.next();
+            project.setManagerID(managSet.getLong(1));
+            project.setCustomerID(custSet.getLong(1));
 
             while(sprintSet.next())
-                sprints.add(oracleSprintDAO.findSprint(sprintSet.getLong(1)));
+                sprints.add(sprintSet.getLong(1));
 
             project.setSprints(sprints);
 
@@ -181,6 +176,7 @@ public class OracleProjectDAO implements ProjectDAO {
             PreparedStatement updateEnd = connection.prepareStatement("update params set date_value = ? where object_id = ? and attribute_id = 112");
             PreparedStatement updateManager = connection.prepareStatement("update links set parent_id = ? where child_id = ? and link_type_id = 151");
             PreparedStatement updateCustomer = connection.prepareStatement("update links set parent_id = ? where child_id = ? and link_type_id = 152");
+            PreparedStatement updateSprint = connection.prepareStatement("update links set parent_id = ? where child_id = ? and link_type_id = 153");
 
             updateName.setString(1, project.getName());
             updateName.setLong(2, project.getProjectID());
@@ -191,10 +187,10 @@ public class OracleProjectDAO implements ProjectDAO {
             updateEnd.setDate(1, (Date) project.getEnd().getTime());
             updateEnd.setLong(2, project.getProjectID());
 
-            updateManager.setLong(1, project.getManager().getID());
+            updateManager.setLong(1, project.getManagerID());
             updateManager.setLong(2, project.getProjectID());
 
-            updateCustomer.setLong(1, project.getCustomer().getCustomerID());
+            updateCustomer.setLong(1, project.getCustomerID());
             updateCustomer.setLong(2, project.getProjectID());
 
             int i = updateName.executeUpdate();
@@ -203,8 +199,15 @@ public class OracleProjectDAO implements ProjectDAO {
             int s = updateManager.executeUpdate();
             int l = updateCustomer.executeUpdate();
 
+            for(Long sprintID : project.getSprints()){
+                updateSprint.setLong(1, project.getProjectID());
+                updateSprint.setLong(2, sprintID);
+                updateSprint.executeUpdate();
+            }
+
             if(i==1 && j==1 && k==1 && s==1 && l==1)
                 return true;
+            
         } catch (SQLException e) {
             e.printStackTrace();
         }

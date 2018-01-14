@@ -12,9 +12,9 @@ public class Project {
     private Calendar start;
     private Calendar end;
     private String name;
-    private Manager manager;
-    private Customer customer;
-    private List<Sprint> sprints;
+    private long managerID;
+    private long customerID;
+    private List<Long> sprintList;
 
     public Project() {
         start = Calendar.getInstance();
@@ -59,20 +59,20 @@ public class Project {
         this.end = toCalendar(date);
     }
 
-    public Manager getManager() {
-        return manager;
+    public long getManagerID() {
+        return managerID;
     }
 
-    public void setManager(Manager manager) {
-        this.manager = manager;
+    public void setManagerID(long managerID) {
+        this.managerID = managerID;
     }
 
-    public Customer getCustomer() {
-        return customer;
+    public long getCustomerID() {
+        return customerID;
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setCustomerID(long customerID) {
+        this.customerID = customerID;
     }
 
     public String getName() {
@@ -83,12 +83,12 @@ public class Project {
         this.name = name;
     }
 
-    public List<Sprint> getSprints() {
-        return sprints;
+    public List<Long> getSprints() {
+        return sprintList;
     }
 
-    public void setSprints(List<Sprint> sprints) {
-        this.sprints = sprints;
+    public void setSprints(List<Long> sprintList) {
+        this.sprintList = sprintList;
     }
 
     private Calendar toCalendar(Date date){
