@@ -8,9 +8,15 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class SingletonCache {
     private Map<Long, Object> map;
+    private final ReadWriteLock readWriteLock;
+    private final Lock readLock;
+    private final Lock writeLock;
 
     private static SingletonCache singletonCache = new SingletonCache();
 
@@ -19,15 +25,29 @@ public class SingletonCache {
     }
 
     private SingletonCache(){
-        map = new ConcurrentHashMap<Long, Object>();
+        map = new ConcurrentHashMap<>();
+        readWriteLock = new ReentrantReadWriteLock(true);
+        readLock = readWriteLock.readLock();
+        writeLock = readWriteLock.writeLock();
     }
 
     public void put(Long key, Object value) {
-        map.put(key, value);
+        writeLock.lock();
+
+        try {
+            map.put(key, value);
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     public Object get(Long key) {
-        Object object = map.get(key);
-        return object;
+        readLock.lock();
+
+        try {
+            return map.get(key);
+        } finally {
+            readLock.unlock();
+        }
     }
 }
