@@ -1,10 +1,22 @@
 package domain;
 
+import generator.UniqueID;
+
 public class Customer {
     private long customerID;
     private String name;
     private String surname;
-    private Project project;
+    private long projectID;
+
+    public Customer(){
+        this.setCustomerID(UniqueID.generateID(this));
+    }
+
+    public Customer (String name, String surname){
+        this();
+        this.name = name;
+        this.surname = surname;
+    }
 
     public long getCustomerID() {
         return customerID;
@@ -30,11 +42,11 @@ public class Customer {
         this.surname = surname;
     }
 
-    public Project getProject() {
-        return project;
+    public long getProjectID() {
+        return projectID;
     }
 
-    public void setProject(Project project) {
-        this.project = project;
+    public void setProject(long projectID) {
+        this.projectID = projectID;
     }
 }

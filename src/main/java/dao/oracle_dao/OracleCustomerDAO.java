@@ -5,16 +5,15 @@ import connections.OracleConnection;
 import dao.dao_interface.CustomerDAO;
 import domain.Customer;
 import domain.Project;
+import generator.UniqueID;
 
 import java.sql.*;
 
 public class OracleCustomerDAO implements CustomerDAO {
     private OracleConnection oracleConnection = new OracleConnection();
-    private OracleProjectDAO oracleProjectDAO = new OracleProjectDAO();
 
     private Customer extractCustomerFromResultSet(ResultSet resultSet) throws SQLException {
         Customer customer = new Customer();
-        customer.setCustomerID(resultSet.getLong(2));
 
         while(resultSet.next()) {
             int i = resultSet.getInt(1);
@@ -39,7 +38,7 @@ public class OracleCustomerDAO implements CustomerDAO {
             PreparedStatement addObject = connection.prepareStatement("insert into OBJECTS (OBJECT_ID, NAME, TYPE_ID) values (?, ?, 3)");
             PreparedStatement addName = connection.prepareStatement("insert into PARAMS (text_value, object_id, attribute_id) values (?, ?, 105)");
             PreparedStatement addSurname = connection.prepareStatement("insert into PARAMS (text_value,object_id, attribute_id) values (?, ?, 106)");
-            PreparedStatement addLink = connection.prepareStatement("insert into LINKS (link_id, parent_id, child_id, link_type_id) values (?, ?, ?, 152)");
+            PreparedStatement addProjectLink = connection.prepareStatement("insert into LINKS (link_id, parent_id, child_id, link_type_id) values (?, ?, ?, 152)");
 
             addObject.setLong(1, customer.getCustomerID());
             addObject.setString(2, customer.getName());
@@ -50,17 +49,18 @@ public class OracleCustomerDAO implements CustomerDAO {
             addSurname.setString(1, customer.getSurname());
             addSurname.setLong(2, customer.getCustomerID());
 
-            addLink.setLong(1, customer.getCustomerID()%13);
-            addLink.setLong(2, customer.getCustomerID());
-            addLink.setLong(3, customer.getProject().getProjectID());
+            addProjectLink.setLong(1, UniqueID.generateID(new Object()));
+            addProjectLink.setLong(2, customer.getCustomerID());
+            addProjectLink.setLong(3, customer.getProjectID());
 
             int i = addObject.executeUpdate();
             int j = addName.executeUpdate();
             int k = addSurname.executeUpdate();
-            int l = addLink.executeUpdate();
+            int l = addProjectLink.executeUpdate();
 
             if(i==1 && j==1 && k==1 && l==1)
                 return true;
+
         } catch (SQLException e){
             e.printStackTrace();
         }
@@ -75,7 +75,6 @@ public class OracleCustomerDAO implements CustomerDAO {
             return customer;
 
         Connection connection = oracleConnection.getConnection();
-        Project project;
 
         try {
             Statement statement = connection.createStatement();
@@ -99,8 +98,9 @@ public class OracleCustomerDAO implements CustomerDAO {
                     "    AND C.OBJECT_ID = " + key);
 
             customer = extractCustomerFromResultSet(resultSet);
-            project = oracleProjectDAO.findProject(projectSet.getLong(1));
-            customer.setProject(project);
+            customer.setCustomerID(key);
+            projectSet.next();
+            customer.setProject(projectSet.getLong(1));
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -124,7 +124,7 @@ public class OracleCustomerDAO implements CustomerDAO {
             updateSurname.setString(1, customer.getSurname());
             updateSurname.setLong(2, customer.getCustomerID());
 
-            updateProject.setLong(2, customer.getProject().getProjectID());
+            updateProject.setLong(2, customer.getProjectID());
             updateProject.setLong(1, customer.getCustomerID());
 
             int i = updateName.executeUpdate();
