@@ -9,15 +9,17 @@ public class Sprint {
     private long sprintID;
     private String name;
     private List<Long> taskList;
+    private long projectID;
 
     public Sprint(){
         this.setSprintID(UniqueID.generateID(this));
         taskList = new ArrayList<>();
     }
 
-    public Sprint(String name){
+    public Sprint(String name, Project project){
         this();
         this.name = name;
+        this.projectID = project.getProjectID();
     }
 
     public long getSprintID() {
@@ -42,5 +44,13 @@ public class Sprint {
 
     public void setTaskList(List<Long> taskList) {
         this.taskList = taskList;
+    }
+
+    public long getProjectID() {
+        return projectID;
+    }
+
+    public void setProjectID(long projectID) {
+        this.projectID = projectID;
     }
 }

@@ -5,6 +5,7 @@ import connections.OracleConnection;
 import dao.dao_interface.SprintDAO;
 import domain.Sprint;
 import domain.Task;
+import generator.UniqueID;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,12 +13,14 @@ import java.util.List;
 
 public class OracleSprintDAO implements SprintDAO{
     private OracleConnection oracleConnection = new OracleConnection();
-    private OracleTaskDAO oracleTaskDAO = new OracleTaskDAO();
 
     private Sprint extractSprintFromResultSet (ResultSet resultSet) throws SQLException {
         Sprint sprint = new Sprint();
+
+        resultSet.next();
         sprint.setSprintID(resultSet.getLong(2));
         sprint.setName(resultSet.getString(3));
+
         return sprint;
     }
     @Override
@@ -27,6 +30,8 @@ public class OracleSprintDAO implements SprintDAO{
         try {
             PreparedStatement addObject = connection.prepareStatement("insert into OBJECTS (OBJECT_ID, NAME, TYPE_ID) values (?, ?, 6)");
             PreparedStatement addName = connection.prepareStatement("insert into PARAMS (text_value, object_id, attribute_id) values (?, ?, 113)");
+            PreparedStatement addTaskLink = connection.prepareStatement("insert into LINKS (link_id, parent_id, child_id, link_type_id) values (?, ?, ?, 154)");
+            PreparedStatement addProjectLink = connection.prepareStatement("insert into LINKS (link_id, parent_id, child_id, link_type_id) values (?, ?, ?, 153)");
 
             addObject.setLong(1, sprint.getSprintID());
             addObject.setString(2, sprint.getName());
@@ -34,20 +39,22 @@ public class OracleSprintDAO implements SprintDAO{
             addName.setString(1, sprint.getName());
             addName.setLong(2, sprint.getSprintID());
 
-            StringBuffer linkQuery = new StringBuffer();
-            for(int i = 0; i < sprint.getTaskList().size(); i++){
-                Task task = sprint.getTaskList().get(i);
-                linkQuery.append("insert into LINKS (link_id, parent_id, child_id, link_type_id) values ("
-                        + task.getTaskID()*sprint.getSprintID()%1273 +
-                        "," + sprint.getSprintID() +
-                        "," + task.getTaskID() + "154);");
-            }
+            addProjectLink.setLong(1, UniqueID.generateID(new Object()));
+            addProjectLink.setLong(2, sprint.getProjectID());
+            addProjectLink.setLong(3, sprint.getSprintID());
 
-            PreparedStatement linksStatement = connection.prepareStatement(linkQuery.toString());
+            if(sprint.getTaskList().size() != 0){
+                for(long task : sprint.getTaskList()){
+                    addTaskLink.setLong(1, UniqueID.generateID(new Object()));
+                    addTaskLink.setLong(2, sprint.getSprintID());
+                    addTaskLink.setLong(3, task);
+                    addTaskLink.executeUpdate();
+                }
+            }
 
             int i = addObject.executeUpdate();
             int j = addName.executeUpdate();
-            int k = linksStatement.executeUpdate();
+            int k = addProjectLink.executeUpdate();
 
             if(i==1 && j==1 && k==1)
                 return true;
@@ -67,11 +74,13 @@ public class OracleSprintDAO implements SprintDAO{
             return sprint;
 
         Connection connection = oracleConnection.getConnection();
-        List<Task> tasks = new ArrayList<>();
+        List<Long> tasks = new ArrayList<>();
+        long projectID;
 
         try {
             Statement statement = connection.createStatement();
             Statement taskStat = connection.createStatement();
+            Statement projectStat = connection.createStatement();
 
             ResultSet resultSet = statement.executeQuery("select attr.ATTRIBUTE_ID, o.object_id, p.text_value\n" +
                     "from objects o\n" +
@@ -90,10 +99,22 @@ public class OracleSprintDAO implements SprintDAO{
                     "    AND LT.LINK_TYPE_ID = 154\n" +
                     "    AND S.OBJECT_ID = " + key);
 
+            ResultSet projectSet = projectStat.executeQuery("SELECT P.OBJECT_ID, P.NAME\n" +
+                    "FROM Objects P\n" +
+                    "INNER JOIN LINKS L ON L.PARENT_ID = P.OBJECT_ID\n" +
+                    "INNER JOIN LINKTYPES LT ON L.LINK_TYPE_ID = LT.LINK_TYPE_ID\n" +
+                    "INNER JOIN OBJECTS S ON L.CHILD_ID = S.OBJECT_ID\n" +
+                    "INNER JOIN TYPES OT ON S.TYPE_ID = OT.TYPE_ID\n" +
+                    "WHERE OT.TYPE_ID = 6\n" +
+                    "AND LT.LINK_TYPE_ID = 153\n" +
+                    "AND S.OBJECT_ID = " + key);
+
             sprint = extractSprintFromResultSet(resultSet);
+            projectSet.next();
+            sprint.setProjectID(projectSet.getLong(1));
 
             while(taskSet.next())
-                tasks.add(oracleTaskDAO.findTask(taskSet.getLong(1)));
+                tasks.add(taskSet.getLong(1));
 
             sprint.setTaskList(tasks);
 
@@ -109,13 +130,25 @@ public class OracleSprintDAO implements SprintDAO{
         Connection connection = oracleConnection.getConnection();
         try {
             PreparedStatement updateName = connection.prepareStatement("update params set text_value = ? where object_id = ? and attribute_id = 113");
+            PreparedStatement updateTask = connection.prepareStatement("update links set parent_id = ? where child_id = ? and link_type_id = 154");
+            PreparedStatement updateProject = connection.prepareStatement("update links set parent_id = ? where child_id = ? and link_type_id = 153");
 
             updateName.setString(1, sprint.getName());
             updateName.setLong(2, sprint.getSprintID());
 
-            int i = updateName.executeUpdate();
+            updateProject.setLong(1, sprint.getProjectID());
+            updateProject.setLong(2, sprint.getSprintID());
 
-            if(i==1)
+            int i = updateName.executeUpdate();
+            int j = updateProject.executeUpdate();
+
+            for(Long taskID : sprint.getTaskList()){
+                updateTask.setLong(1, sprint.getSprintID());
+                updateTask.setLong(2, taskID);
+                updateTask.executeUpdate();
+            }
+
+            if(i==1 && j==1)
                 return true;
         } catch (SQLException e) {
             e.printStackTrace();
