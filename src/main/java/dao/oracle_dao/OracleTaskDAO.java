@@ -3,8 +3,6 @@ package dao.oracle_dao;
 import caching.SingletonCache;
 import connections.OracleConnection;
 import dao.dao_interface.TaskDAO;
-import domain.Employee;
-import domain.Sprint;
 import domain.Task;
 import generator.UniqueID;
 

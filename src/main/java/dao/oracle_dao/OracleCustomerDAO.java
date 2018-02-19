@@ -4,7 +4,6 @@ import caching.SingletonCache;
 import connections.OracleConnection;
 import dao.dao_interface.CustomerDAO;
 import domain.Customer;
-import domain.Project;
 import generator.UniqueID;
 
 import java.sql.*;

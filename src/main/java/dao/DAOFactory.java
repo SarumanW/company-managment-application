@@ -2,8 +2,6 @@ package dao;
 
 import dao.dao_interface.*;
 
-import java.sql.Connection;
-
 public abstract class DAOFactory {
     public abstract EmployeeDAO getEmployeeDAO();
     public abstract DepartmentDAO getDepartmentDAO();

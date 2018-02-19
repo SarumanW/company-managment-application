@@ -1,0 +1,12 @@
+{
+"projectID":41,
+"start":"10/02/2017",
+"end":"18/03/2018",
+"name":"Creating of advertising",
+"managerID":31,
+"customerID":71,
+"sprintList":[
+51,
+52
+]
+}

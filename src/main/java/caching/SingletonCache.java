@@ -1,11 +1,5 @@
 package caching;
 
-import connections.OracleConnection;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
@@ -13,6 +7,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class SingletonCache {
+    private static final int MAX_SIZE = 100;
     private Map<Long, Object> map;
     private final ReadWriteLock readWriteLock;
     private final Lock readLock;
@@ -33,6 +28,9 @@ public class SingletonCache {
 
     public void put(Long key, Object value) {
         writeLock.lock();
+
+        if(map.size() == MAX_SIZE)
+            map.clear();
 
         try {
             map.put(key, value);
