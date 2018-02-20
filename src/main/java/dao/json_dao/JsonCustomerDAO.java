@@ -42,7 +42,9 @@ public class JsonCustomerDAO implements CustomerDAO {
 
     @Override
     public boolean updateCustomer(Customer customer) {
-        return false;
+        deleteCustomer(customer.getCustomerID());
+        insertCustomer(customer);
+        return true;
     }
 
     @Override

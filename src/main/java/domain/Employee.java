@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Employee {
-    private long ID;
+    private long employeeID;
     private String name;
     private String surname;
     private double salary;
@@ -51,11 +51,11 @@ public class Employee {
     }
 
     public long getID() {
-        return ID;
+        return employeeID;
     }
 
     public void setID(long ID) {
-        this.ID = ID;
+        this.employeeID = ID;
     }
 
     public double getSalary() {
@@ -81,7 +81,7 @@ public class Employee {
     @Override
     public String toString() {
         return "Employee{" +
-                "ID=" + ID +
+                "ID=" + employeeID +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", salary=" + salary +

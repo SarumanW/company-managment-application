@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Manager {
-    private long ID;
+    private long managerID;
     private String name;
     private String surname;
     private double salary;
@@ -25,11 +25,11 @@ public class Manager {
     }
 
     public long getID() {
-        return ID;
+        return managerID;
     }
 
     public void setID(long ID) {
-        this.ID = ID;
+        this.managerID = ID;
     }
 
     public String getName() {
@@ -67,7 +67,7 @@ public class Manager {
     @Override
     public String toString() {
         return "Manager{" +
-                "ID=" + ID +
+                "ID=" + managerID +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", salary=" + salary +

@@ -22,12 +22,10 @@ public class Main {
         System.out.println("Compiled");
 
         DAOFactory daoFactory = new JsonDAOFactory();
-        CustomerDAO customerDAO = daoFactory.getCustomerDAO();
+        DepartmentDAO departmentDAO = daoFactory.getDepartmentDAO();
 
-//        Customer customer = new Customer("test2", "customer2");
-//        customer.setProject(12);
-//
-//        customerDAO.insertCustomer(customer);
+        Department department = departmentDAO.findDepartment(21);
+        System.out.println(department);
 
     }
 }
