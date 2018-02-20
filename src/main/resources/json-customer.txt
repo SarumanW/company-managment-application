@@ -1,6 +1,1 @@
-{
-"customerID":71,
-"name":"Oleg",
-"surname":"Pichkariov",
-"projectID": 41
-}
+{"surname":"customer2","name":"test2","customerID":1520120579,"projectID":12}

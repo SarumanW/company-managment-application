@@ -49,4 +49,14 @@ public class Customer {
     public void setProject(long projectID) {
         this.projectID = projectID;
     }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "customerID=" + customerID +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", projectID=" + projectID +
+                '}';
+    }
 }
