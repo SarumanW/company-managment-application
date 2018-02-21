@@ -1,5 +1,6 @@
 package dao.json_dao;
 
+import caching.SingletonCache;
 import dao.dao_interface.DepartmentDAO;
 import domain.Customer;
 import domain.Department;
@@ -46,8 +47,16 @@ public class JsonDepartmentDAO implements DepartmentDAO {
 
     @Override
     public Department findDepartment(long key) {
-        return parseJson(Parser.parseFile
+        Department department = (Department) SingletonCache.getInstance().get(key);
+
+        if(department != null)
+            return department;
+
+        department = parseJson(Parser.parseFile
                 (key, Department.class, FILE_NAME));
+        SingletonCache.getInstance().put(key, department);
+
+        return department;
     }
 
     @Override

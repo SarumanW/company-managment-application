@@ -1,5 +1,6 @@
 package dao.json_dao;
 
+import caching.SingletonCache;
 import dao.dao_interface.CustomerDAO;
 import domain.Customer;
 import generator.Parser;
@@ -36,8 +37,16 @@ public class JsonCustomerDAO implements CustomerDAO {
 
     @Override
     public Customer findCustomer(long key) {
-        return parseJson(Parser.parseFile
+        Customer customer = (Customer) SingletonCache.getInstance().get(key);
+
+        if(customer != null)
+            return customer;
+
+        customer = parseJson(Parser.parseFile
                 (key, Customer.class, FILE_NAME));
+        SingletonCache.getInstance().put(key, customer);
+
+        return customer;
     }
 
     @Override
