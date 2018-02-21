@@ -26,6 +26,7 @@ public class Employee {
         this.setDepartment(department.getID());
         department.getEmployees().add(this.getID());
     }
+
     public long getDepartment() {
         return departmentID;
     }

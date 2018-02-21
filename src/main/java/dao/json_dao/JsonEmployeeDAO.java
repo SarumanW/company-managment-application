@@ -64,6 +64,7 @@ public class JsonEmployeeDAO implements EmployeeDAO {
 
     @Override
     public boolean updateEmployee(Employee employee) {
+        SingletonCache.getInstance().put(employee.getID(), employee);
         deleteEmployee(employee.getID());
         insertEmployee(employee);
         return true;
@@ -73,6 +74,7 @@ public class JsonEmployeeDAO implements EmployeeDAO {
     public boolean deleteEmployee(long key) {
         Parser.removeLineFromFile(FILE_NAME,
                 Parser.parseFile(key, Customer.class, FILE_NAME).toString());
+        SingletonCache.getInstance().remove(key);
         return true;
     }
 }

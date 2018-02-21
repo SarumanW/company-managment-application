@@ -61,6 +61,7 @@ public class JsonDepartmentDAO implements DepartmentDAO {
 
     @Override
     public boolean updateDepartment(Department department) {
+        SingletonCache.getInstance().put(department.getID(), department);
         deleteDepartment(department.getID());
         insertDepartment(department);
         return true;
@@ -70,6 +71,7 @@ public class JsonDepartmentDAO implements DepartmentDAO {
     public boolean deleteDepartment(long key) {
         Parser.removeLineFromFile(FILE_NAME,
                 Parser.parseFile(key, Department.class, FILE_NAME).toString());
+        SingletonCache.getInstance().remove(key);
         return true;
     }
 }

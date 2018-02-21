@@ -51,6 +51,7 @@ public class JsonCustomerDAO implements CustomerDAO {
 
     @Override
     public boolean updateCustomer(Customer customer) {
+        SingletonCache.getInstance().put(customer.getCustomerID(), customer);
         deleteCustomer(customer.getCustomerID());
         insertCustomer(customer);
         return true;
@@ -60,6 +61,7 @@ public class JsonCustomerDAO implements CustomerDAO {
     public boolean deleteCustomer(long key) {
         Parser.removeLineFromFile(FILE_NAME,
                 Parser.parseFile(key, Customer.class, FILE_NAME).toString());
+        SingletonCache.getInstance().remove(key);
         return true;
     }
 }

@@ -48,4 +48,14 @@ public class SingletonCache {
             readLock.unlock();
         }
     }
+
+    public void remove(Long key) {
+        writeLock.lock();
+
+        try {
+            map.remove(key);
+        } finally {
+            readLock.unlock();
+        }
+    }
 }
