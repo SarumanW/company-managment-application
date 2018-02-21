@@ -15,15 +15,21 @@ public class Project {
 
     public Project() {
         this.setProjectID(UniqueID.generateID(this));
-        start = Calendar.getInstance();
-        end = new GregorianCalendar();
-        sprintList = new ArrayList<>();
+        this.start = Calendar.getInstance();
+        this.end = new GregorianCalendar();
+        this.sprintList = new ArrayList<>();
     }
 
     public Project(Date endDate){
         this();
-        end = new GregorianCalendar();
-        end.setTime(endDate);
+        this.end = new GregorianCalendar();
+        this.end.setTime(endDate);
+    }
+
+    public Project(Calendar endDate, String name){
+        this();
+        this.end = endDate;
+        this.name = name;
     }
 
     public long getProjectID() {
@@ -94,5 +100,18 @@ public class Project {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         return calendar;
+    }
+
+    @Override
+    public String toString() {
+        return "Project{" +
+                "projectID=" + projectID +
+                ", start=" + start.getTime() +
+                ", end=" + end.getTime() +
+                ", name='" + name + '\'' +
+                ", managerID=" + managerID +
+                ", customerID=" + customerID +
+                ", sprintList=" + sprintList +
+                '}';
     }
 }

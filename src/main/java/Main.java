@@ -1,8 +1,5 @@
 import dao.DAOFactory;
-import dao.dao_interface.CustomerDAO;
-import dao.dao_interface.DepartmentDAO;
-import dao.dao_interface.EmployeeDAO;
-import dao.dao_interface.TaskDAO;
+import dao.dao_interface.*;
 import dao.json_dao.JsonDAOFactory;
 import dao.oracle_dao.OracleDAOFactory;
 import domain.*;
@@ -22,10 +19,14 @@ public class Main {
         System.out.println("Compiled");
 
         DAOFactory daoFactory = new JsonDAOFactory();
-        DepartmentDAO departmentDAO = daoFactory.getDepartmentDAO();
+        ProjectDAO projectDAO = daoFactory.getProjectDAO();
 
-        Department department = departmentDAO.findDepartment(21);
-        System.out.println(department);
+        Project project = new Project(new GregorianCalendar(2020, Calendar.MAY, 13), "Project1");
+        projectDAO.insertProject(project);
+
+//        Project project = projectDAO.findProject(41);
+//        System.out.println(project);
+
 
     }
 }

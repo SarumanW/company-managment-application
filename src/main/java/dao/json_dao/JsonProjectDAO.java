@@ -18,9 +18,9 @@ import java.util.List;
 
 public class JsonProjectDAO implements ProjectDAO {
     private static final String FILE_NAME = "F:\\save\\netcracker\\kozlovalab2\\src\\main\\resources\\json-project.txt";
+    private static final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
     private Project parseJson(JSONObject jsonObject){
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         Project project = new Project();
 
         project.setProjectID(jsonObject.getLong("projectID"));
@@ -44,12 +44,15 @@ public class JsonProjectDAO implements ProjectDAO {
 
     @Override
     public boolean insertProject(Project project) {
-        String stringJson = new JSONObject(project).toString();
+        JSONObject projectJson = new JSONObject(project);
+        projectJson.put("start", formatter.format(project.getStart().getTime()));
+        projectJson.put("end", formatter.format(project.getEnd().getTime()));
+        String stringJson = projectJson.toString();
 
         try(FileWriter fw = new FileWriter(FILE_NAME, true);
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter out = new PrintWriter(bw)) {
-            out.println(stringJson);
+            out.write(stringJson);
         } catch (IOException e) {
             e.printStackTrace();
         }

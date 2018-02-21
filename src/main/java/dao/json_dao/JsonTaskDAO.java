@@ -40,7 +40,7 @@ public class JsonTaskDAO implements TaskDAO {
         try(FileWriter fw = new FileWriter(FILE_NAME, true);
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter out = new PrintWriter(bw)) {
-            out.println(stringJson);
+            out.write(stringJson);
         } catch (IOException e) {
             e.printStackTrace();
         }
