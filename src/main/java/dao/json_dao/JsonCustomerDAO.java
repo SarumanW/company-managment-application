@@ -13,10 +13,12 @@ public class JsonCustomerDAO implements CustomerDAO {
 
     private Customer parseJson(JSONObject jsonObject){
         Customer customer = new Customer();
+
         customer.setCustomerID(jsonObject.getLong("customerID"));
         customer.setName(jsonObject.getString("name"));
         customer.setSurname(jsonObject.getString("surname"));
         customer.setProject(jsonObject.getLong("projectID"));
+
         return customer;
     }
 

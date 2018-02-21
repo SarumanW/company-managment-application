@@ -20,6 +20,7 @@ public class JsonDepartmentDAO implements DepartmentDAO {
 
     private Department parseJson(JSONObject jsonObject){
         Department department = new Department();
+
         department.setID(jsonObject.getLong("departmentID"));
         department.setName(jsonObject.getString("name"));
         List<Long> employees= new ArrayList<>();
@@ -27,6 +28,7 @@ public class JsonDepartmentDAO implements DepartmentDAO {
             employees.add(Long.parseLong(employeeId.toString()));
         }
         department.setEmployees(employees);
+
         return department;
     }
 

@@ -1,26 +1,80 @@
 package dao.json_dao;
 
+import caching.SingletonCache;
 import dao.dao_interface.ManagerDAO;
+import domain.Department;
 import domain.Manager;
+import generator.Parser;
+import org.json.JSONObject;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JsonManagerDAO implements ManagerDAO {
+    private static final String FILE_NAME = "F:\\save\\netcracker\\kozlovalab2\\src\\main\\resources\\json-manager.txt";
+
+    private Manager parseJson(JSONObject jsonObject){
+        Manager manager = new Manager();
+
+        manager.setID(jsonObject.getLong("managerID"));
+        manager.setName(jsonObject.getString("name"));
+        manager.setSurname(jsonObject.getString("surname"));
+        manager.setSalary(jsonObject.getDouble("salary"));
+        List<Long> projectList= new ArrayList<>();
+        for(Object projectId : jsonObject.getJSONArray("projectList")){
+            projectList.add(Long.parseLong(projectId.toString()));
+        }
+        manager.setProjectList(projectList);
+
+        return manager;
+    }
+
     @Override
     public boolean insertManager(Manager manager) {
-        return false;
+        String stringJson = new JSONObject(manager).toString();
+
+        try(FileWriter fw = new FileWriter(FILE_NAME, true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            PrintWriter out = new PrintWriter(bw)) {
+            out.println(stringJson);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return true;
     }
 
     @Override
     public Manager findManager(long key) {
-        return null;
+        Manager manager = (Manager) SingletonCache.getInstance().get(key);
+
+        if(manager != null)
+            return manager;
+
+        manager = parseJson(Parser.parseFile
+                (key, Manager.class, FILE_NAME));
+        SingletonCache.getInstance().put(key, manager);
+
+        return manager;
     }
 
     @Override
     public boolean updateManager(Manager manager) {
-        return false;
+        SingletonCache.getInstance().put(manager.getID(), manager);
+        deleteManager(manager.getID());
+        insertManager(manager);
+        return true;
     }
 
     @Override
     public boolean deleteManager(long key) {
-        return false;
+        Parser.removeLineFromFile(FILE_NAME,
+                Parser.parseFile(key, Manager.class, FILE_NAME).toString());
+        SingletonCache.getInstance().remove(key);
+        return true;
     }
 }
