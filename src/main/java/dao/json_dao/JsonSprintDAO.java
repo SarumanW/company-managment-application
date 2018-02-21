@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JsonSprintDAO implements SprintDAO {
-    private static final String FILE_NAME = "F:\\save\\netcracker\\kozlovalab2\\src\\main\\resources\\json-sprint.txt";
+    private static final String FILE_NAME = "F:\\save\\netcracker\\kozlovalab2\\src\\main\\resources\\json\\json-sprint.txt";
 
     private Sprint parseJson(JSONObject jsonObject){
         Sprint sprint = new Sprint();

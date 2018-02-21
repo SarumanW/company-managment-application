@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JsonProjectDAO implements ProjectDAO {
-    private static final String FILE_NAME = "F:\\save\\netcracker\\kozlovalab2\\src\\main\\resources\\json-project.txt";
+    private static final String FILE_NAME = "F:\\save\\netcracker\\kozlovalab2\\src\\main\\resources\\json\\json-project.txt";
     private static final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
     private Project parseJson(JSONObject jsonObject){

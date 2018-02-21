@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import java.io.*;
 
 public class JsonCustomerDAO implements CustomerDAO {
-    private static final String FILE_NAME = "F:\\save\\netcracker\\kozlovalab2\\src\\main\\resources\\json-customer.txt";
+    private static final String FILE_NAME = "F:\\save\\netcracker\\kozlovalab2\\src\\main\\resources\\json\\json-customer.txt";
 
     private Customer parseJson(JSONObject jsonObject){
         Customer customer = new Customer();

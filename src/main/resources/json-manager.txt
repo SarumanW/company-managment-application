@@ -1,1 +1,0 @@
-{"managerID":21,"name":"Kim","surname":"Kardashian","salary":10000,"projectList":[41]}

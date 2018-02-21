@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JsonManagerDAO implements ManagerDAO {
-    private static final String FILE_NAME = "F:\\save\\netcracker\\kozlovalab2\\src\\main\\resources\\json-manager.txt";
+    private static final String FILE_NAME = "F:\\save\\netcracker\\kozlovalab2\\src\\main\\resources\\json\\json-manager.txt";
 
     private Manager parseJson(JSONObject jsonObject){
         Manager manager = new Manager();

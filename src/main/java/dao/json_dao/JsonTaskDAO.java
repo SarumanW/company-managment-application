@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JsonTaskDAO implements TaskDAO {
-    private static final String FILE_NAME = "F:\\save\\netcracker\\kozlovalab2\\src\\main\\resources\\json-task.txt";
+    private static final String FILE_NAME = "F:\\save\\netcracker\\kozlovalab2\\src\\main\\resources\\json\\json-task.txt";
 
     private Task parseJson(JSONObject jsonObject){
         Task task = new Task();

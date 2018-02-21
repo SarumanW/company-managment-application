@@ -1,2 +1,0 @@
-{"employeeID":11,"name":"Jackie","surname":"Chan","salary":5000,"departmentID":21,"taskList":[61,62]}
-{"employeeID":12,"name":"Lindsy","surname":"Lohan","salary":4000,"departmentID":21,"taskList":[61]}

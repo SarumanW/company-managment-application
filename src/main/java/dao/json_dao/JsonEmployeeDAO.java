@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JsonEmployeeDAO implements EmployeeDAO {
-    private static final String FILE_NAME = "F:\\save\\netcracker\\kozlovalab2\\src\\main\\resources\\json-employee.txt";
+    private static final String FILE_NAME = "F:\\save\\netcracker\\kozlovalab2\\src\\main\\resources\\json\\json-employee.txt";
 
     private Employee parseJson(JSONObject jsonObject){
         Employee employee = new Employee();

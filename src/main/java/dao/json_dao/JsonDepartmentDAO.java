@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JsonDepartmentDAO implements DepartmentDAO {
-    private static final String FILE_NAME = "F:\\save\\netcracker\\kozlovalab2\\src\\main\\resources\\json-department.txt";
+    private static final String FILE_NAME = "F:\\save\\netcracker\\kozlovalab2\\src\\main\\resources\\json\\json-department.txt";
 
     private Department parseJson(JSONObject jsonObject){
         Department department = new Department();
