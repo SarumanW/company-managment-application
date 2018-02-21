@@ -8,8 +8,8 @@ import java.util.List;
 public class Sprint {
     private long sprintID;
     private String name;
-    private List<Long> taskList;
     private long projectID;
+    private List<Long> taskList;
 
     public Sprint(){
         this.setSprintID(UniqueID.generateID(this));

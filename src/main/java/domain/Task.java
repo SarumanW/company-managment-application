@@ -9,8 +9,8 @@ public class Task {
     private long taskID;
     private String name;
     private long estimate;
+    private long sprintID;
     private List<Long> employees;
-    private long sprint;
 
     public Task(){
         this.setTaskID(UniqueID.generateID(this));
@@ -23,7 +23,7 @@ public class Task {
         this.estimate = estimate;
         this.employees.add(employee.getID());
         employee.getTaskList().add(this.getTaskID());
-        this.sprint = sprint.getSprintID();
+        this.sprintID = sprint.getSprintID();
         sprint.getTaskList().add(this.getTaskID());
     }
 
@@ -65,11 +65,11 @@ public class Task {
     }
 
     public long getSprint() {
-        return sprint;
+        return sprintID;
     }
 
     public void setSprint(long sprint) {
-        this.sprint = sprint;
+        this.sprintID = sprint;
     }
 
     @Override
