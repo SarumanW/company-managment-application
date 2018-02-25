@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <customers>
-                    
+                        
 
     
     
+    
+        
+    
+    
     <Customer>
                         
         
-        <CustomerID>1519661149</CustomerID>
-                        
-        
-        <Name>customer-name1</Name>
-                        
-        
-        <Surname>customer-surname1</Surname>
-                        
-        
         <ProjectID>0</ProjectID>
+                        
+        
+        <CustomerID>1519661608</CustomerID>
+                        
+        
+        <Surname>customer-surname2</Surname>
+                        
+        
+        <Name>customer-name2</Name>
                     
     
     </Customer>
@@ -26,18 +30,12 @@
                 
         <ProjectID>0</ProjectID>
                 
-        <CustomerID>1519661608</CustomerID>
+        <CustomerID>1519661638</CustomerID>
                 
-        <Surname>customer-surname2</Surname>
+        <Surname>customer-surname3</Surname>
                 
-        <Name>customer-name2</Name>
+        <Name>customer-name3</Name>
             
     </Customer>
     
-    <Customer>
-        <ProjectID>0</ProjectID>
-        <CustomerID>1519661638</CustomerID>
-        <Surname>customer-surname3</Surname>
-        <Name>customer-name3</Name>
-    </Customer>
 </customers>

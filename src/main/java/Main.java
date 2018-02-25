@@ -28,8 +28,8 @@ public class Main {
         daoFactory = new XmlDAOFactory();
         CustomerDAO customerDAO = daoFactory.getCustomerDAO();
 
-        Customer customer = new Customer("customer-name3", "customer-surname3");
-        customerDAO.insertCustomer(customer);
+        Customer customer = customerDAO.findCustomer(1519661608);
+        System.out.println(customer);
 
 
     }
