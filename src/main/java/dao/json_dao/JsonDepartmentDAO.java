@@ -2,10 +2,8 @@ package dao.json_dao;
 
 import caching.SingletonCache;
 import dao.dao_interface.DepartmentDAO;
-import domain.Customer;
 import domain.Department;
-import domain.Employee;
-import generator.Parser;
+import generator.JsonParser;
 import org.json.JSONObject;
 
 import java.io.BufferedWriter;
@@ -54,7 +52,7 @@ public class JsonDepartmentDAO implements DepartmentDAO {
         if(department != null)
             return department;
 
-        department = parseJson(Parser.parseFile
+        department = parseJson(JsonParser.parseFile
                 (key, Department.class, FILE_NAME));
         SingletonCache.getInstance().put(key, department);
 
@@ -71,8 +69,8 @@ public class JsonDepartmentDAO implements DepartmentDAO {
 
     @Override
     public boolean deleteDepartment(long key) {
-        Parser.removeLineFromFile(FILE_NAME,
-                Parser.parseFile(key, Department.class, FILE_NAME).toString());
+        JsonParser.removeLineFromFile(FILE_NAME,
+                JsonParser.parseFile(key, Department.class, FILE_NAME).toString());
         SingletonCache.getInstance().remove(key);
         return true;
     }

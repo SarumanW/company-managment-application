@@ -2,11 +2,8 @@ package dao.json_dao;
 
 import caching.SingletonCache;
 import dao.dao_interface.EmployeeDAO;
-import domain.Customer;
-import domain.Department;
 import domain.Employee;
-import domain.Task;
-import generator.Parser;
+import generator.JsonParser;
 import org.json.JSONObject;
 
 import java.io.BufferedWriter;
@@ -55,7 +52,7 @@ public class JsonEmployeeDAO implements EmployeeDAO {
         if(employee != null)
             return employee;
 
-        employee = parseJson(Parser.parseFile
+        employee = parseJson(JsonParser.parseFile
                 (key, Employee.class, FILE_NAME));
         SingletonCache.getInstance().put(key, employee);
 
@@ -72,8 +69,8 @@ public class JsonEmployeeDAO implements EmployeeDAO {
 
     @Override
     public boolean deleteEmployee(long key) {
-        Parser.removeLineFromFile(FILE_NAME,
-                Parser.parseFile(key, Employee.class, FILE_NAME).toString());
+        JsonParser.removeLineFromFile(FILE_NAME,
+                JsonParser.parseFile(key, Employee.class, FILE_NAME).toString());
         SingletonCache.getInstance().remove(key);
         return true;
     }

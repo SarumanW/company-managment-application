@@ -2,6 +2,7 @@ import dao.DAOFactory;
 import dao.dao_interface.*;
 import dao.json_dao.JsonDAOFactory;
 import dao.oracle_dao.OracleDAOFactory;
+import dao.xml_dao.XmlDAOFactory;
 import domain.*;
 import org.json.JSONObject;
 
@@ -21,11 +22,14 @@ public class Main {
         DAOFactory daoFactory = new JsonDAOFactory();
         ProjectDAO projectDAO = daoFactory.getProjectDAO();
 
-        Project project = new Project(new GregorianCalendar(2020, Calendar.MAY, 13), "Project1");
-        projectDAO.insertProject(project);
+//        Project project = new Project(new GregorianCalendar(2020, Calendar.MAY, 13), "Project1");
+//        projectDAO.insertProject(project);
 
-//        Project project = projectDAO.findProject(41);
-//        System.out.println(project);
+        daoFactory = new XmlDAOFactory();
+        CustomerDAO customerDAO = daoFactory.getCustomerDAO();
+
+        Customer customer = new Customer("customer-name3", "customer-surname3");
+        customerDAO.insertCustomer(customer);
 
 
     }

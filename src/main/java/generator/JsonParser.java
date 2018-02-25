@@ -4,7 +4,7 @@ import org.json.JSONObject;
 
 import java.io.*;
 
-public class Parser {
+public class JsonParser {
     public static JSONObject parseFile(long id, Class clazz, String FILE_NAME){
         String currentLine = "";
 

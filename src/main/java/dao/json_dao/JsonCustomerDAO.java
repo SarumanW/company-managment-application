@@ -3,7 +3,7 @@ package dao.json_dao;
 import caching.SingletonCache;
 import dao.dao_interface.CustomerDAO;
 import domain.Customer;
-import generator.Parser;
+import generator.JsonParser;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -44,7 +44,7 @@ public class JsonCustomerDAO implements CustomerDAO {
         if(customer != null)
             return customer;
 
-        customer = parseJson(Parser.parseFile
+        customer = parseJson(JsonParser.parseFile
                 (key, Customer.class, FILE_NAME));
         SingletonCache.getInstance().put(key, customer);
 
@@ -61,8 +61,8 @@ public class JsonCustomerDAO implements CustomerDAO {
 
     @Override
     public boolean deleteCustomer(long key) {
-        Parser.removeLineFromFile(FILE_NAME,
-                Parser.parseFile(key, Customer.class, FILE_NAME).toString());
+        JsonParser.removeLineFromFile(FILE_NAME,
+                JsonParser.parseFile(key, Customer.class, FILE_NAME).toString());
         SingletonCache.getInstance().remove(key);
         return true;
     }

@@ -2,9 +2,8 @@ package dao.json_dao;
 
 import caching.SingletonCache;
 import dao.dao_interface.SprintDAO;
-import domain.Manager;
 import domain.Sprint;
-import generator.Parser;
+import generator.JsonParser;
 import org.json.JSONObject;
 
 import java.io.BufferedWriter;
@@ -54,7 +53,7 @@ public class JsonSprintDAO implements SprintDAO {
         if(sprint != null)
             return sprint;
 
-        sprint = parseJson(Parser.parseFile
+        sprint = parseJson(JsonParser.parseFile
                 (key, Sprint.class, FILE_NAME));
         SingletonCache.getInstance().put(key, sprint);
 
@@ -71,8 +70,8 @@ public class JsonSprintDAO implements SprintDAO {
 
     @Override
     public boolean deleteSprint(long key) {
-        Parser.removeLineFromFile(FILE_NAME,
-                Parser.parseFile(key, Sprint.class, FILE_NAME).toString());
+        JsonParser.removeLineFromFile(FILE_NAME,
+                JsonParser.parseFile(key, Sprint.class, FILE_NAME).toString());
         SingletonCache.getInstance().remove(key);
         return true;
     }

@@ -2,9 +2,8 @@ package dao.json_dao;
 
 import caching.SingletonCache;
 import dao.dao_interface.ManagerDAO;
-import domain.Department;
 import domain.Manager;
-import generator.Parser;
+import generator.JsonParser;
 import org.json.JSONObject;
 
 import java.io.BufferedWriter;
@@ -55,7 +54,7 @@ public class JsonManagerDAO implements ManagerDAO {
         if(manager != null)
             return manager;
 
-        manager = parseJson(Parser.parseFile
+        manager = parseJson(JsonParser.parseFile
                 (key, Manager.class, FILE_NAME));
         SingletonCache.getInstance().put(key, manager);
 
@@ -72,8 +71,8 @@ public class JsonManagerDAO implements ManagerDAO {
 
     @Override
     public boolean deleteManager(long key) {
-        Parser.removeLineFromFile(FILE_NAME,
-                Parser.parseFile(key, Manager.class, FILE_NAME).toString());
+        JsonParser.removeLineFromFile(FILE_NAME,
+                JsonParser.parseFile(key, Manager.class, FILE_NAME).toString());
         SingletonCache.getInstance().remove(key);
         return true;
     }

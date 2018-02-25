@@ -2,9 +2,8 @@ package dao.json_dao;
 
 import caching.SingletonCache;
 import dao.dao_interface.ProjectDAO;
-import domain.Manager;
 import domain.Project;
-import generator.Parser;
+import generator.JsonParser;
 import org.json.JSONObject;
 
 import java.io.BufferedWriter;
@@ -67,7 +66,7 @@ public class JsonProjectDAO implements ProjectDAO {
         if(project != null)
             return project;
 
-        project = parseJson(Parser.parseFile
+        project = parseJson(JsonParser.parseFile
                 (key, Project.class, FILE_NAME));
         SingletonCache.getInstance().put(key, project);
 
@@ -84,8 +83,8 @@ public class JsonProjectDAO implements ProjectDAO {
 
     @Override
     public boolean deleteProject(long key) {
-        Parser.removeLineFromFile(FILE_NAME,
-                Parser.parseFile(key, Project.class, FILE_NAME).toString());
+        JsonParser.removeLineFromFile(FILE_NAME,
+                JsonParser.parseFile(key, Project.class, FILE_NAME).toString());
         SingletonCache.getInstance().remove(key);
         return true;
     }
