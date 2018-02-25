@@ -23,6 +23,8 @@ public class DomHelper {
         Document document = null;
         try{
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setNamespaceAware(true);
+            dbf.setIgnoringElementContentWhitespace(true);
             DocumentBuilder db = dbf.newDocumentBuilder();
             document = db.parse(filePath);
         } catch (ParserConfigurationException e) {

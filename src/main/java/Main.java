@@ -17,8 +17,6 @@ import java.util.*;
 public class Main {
 
     public static void main(String[] args) throws SQLException, ParseException {
-        System.out.println("Compiled");
-
         DAOFactory daoFactory = new JsonDAOFactory();
         ProjectDAO projectDAO = daoFactory.getProjectDAO();
 
@@ -26,11 +24,10 @@ public class Main {
 //        projectDAO.insertProject(project);
 
         daoFactory = new XmlDAOFactory();
-        CustomerDAO customerDAO = daoFactory.getCustomerDAO();
+        DepartmentDAO departmentDAO = daoFactory.getDepartmentDAO();
 
-        Customer customer = customerDAO.findCustomer(1519661608);
-        System.out.println(customer);
-
+        Department department = departmentDAO.findDepartment(1519683452);
+        System.out.println(department);
 
     }
 }

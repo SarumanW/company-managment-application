@@ -23,7 +23,7 @@ public class Employee {
         this.setName(name);
         this.setSurname(surname);
         this.setSalary(salary);
-        this.setDepartment(department.getID());
+        this.setDepartment(department.getDepartmentID());
         department.getEmployees().add(this.getID());
     }
 

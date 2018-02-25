@@ -40,11 +40,11 @@ public class OracleDepartmentDAO implements DepartmentDAO {
             PreparedStatement addName = connection.prepareStatement("insert into PARAMS (text_value, number_value, object_id, attribute_id) values (?, NULL, ?, 101)");
             PreparedStatement addLink = connection.prepareStatement("insert into LINKS (link_id, parent_id, child_id, link_type_id) values (?, ?, ?, 150)");
 
-            addObject.setLong(1, department.getID());
+            addObject.setLong(1, department.getDepartmentID());
             addObject.setString(2, department.getName());
 
             addName.setString(1, department.getName());
-            addName.setLong(2, department.getID());
+            addName.setLong(2, department.getDepartmentID());
 
             int i = addObject.executeUpdate();
             int j = addName.executeUpdate();
@@ -52,7 +52,7 @@ public class OracleDepartmentDAO implements DepartmentDAO {
             if(department.getEmployees().size() != 0){
                 for(long employee : department.getEmployees()){
                     addLink.setLong(1, UniqueID.generateID(new Object()));
-                    addLink.setLong(2, department.getID());
+                    addLink.setLong(2, department.getDepartmentID());
                     addLink.setLong(3, employee);
                     addLink.executeUpdate();
                 }
@@ -99,7 +99,7 @@ public class OracleDepartmentDAO implements DepartmentDAO {
                     "    AND D.object_id = " + key);
 
             department = extractDepartmentFromResultSet(resultSet);
-            department.setID(key);
+            department.setDepartmentID(key);
 
             while(employeeSet.next()){
                 long employee = employeeSet.getLong(1);
@@ -124,12 +124,12 @@ public class OracleDepartmentDAO implements DepartmentDAO {
             PreparedStatement updateEmployee = connection.prepareStatement("update links set parent_id = ? where child_id = ? and link_type_id = 150");
 
             updateName.setString(1, department.getName());
-            updateName.setLong(2, department.getID());
+            updateName.setLong(2, department.getDepartmentID());
 
             int i = updateName.executeUpdate();
 
             for(Long employeeID : department.getEmployees()){
-                updateEmployee.setLong(1, department.getID());
+                updateEmployee.setLong(1, department.getDepartmentID());
                 updateEmployee.setLong(2, employeeID);
                 updateEmployee.executeUpdate();
             }

@@ -19,7 +19,7 @@ public class JsonDepartmentDAO implements DepartmentDAO {
     private Department parseJson(JSONObject jsonObject){
         Department department = new Department();
 
-        department.setID(jsonObject.getLong("departmentID"));
+        department.setDepartmentID(jsonObject.getLong("departmentID"));
         department.setName(jsonObject.getString("name"));
         List<Long> employees= new ArrayList<>();
         for(Object employeeId : jsonObject.getJSONArray("employees")){
@@ -61,8 +61,8 @@ public class JsonDepartmentDAO implements DepartmentDAO {
 
     @Override
     public boolean updateDepartment(Department department) {
-        SingletonCache.getInstance().put(department.getID(), department);
-        deleteDepartment(department.getID());
+        SingletonCache.getInstance().put(department.getDepartmentID(), department);
+        deleteDepartment(department.getDepartmentID());
         insertDepartment(department);
         return true;
     }

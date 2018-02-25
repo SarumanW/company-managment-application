@@ -11,7 +11,7 @@ public class Department {
     private List<Long> employees;
 
     public Department(){
-        this.setID(UniqueID.generateID(this));
+        this.setDepartmentID(UniqueID.generateID(this));
         employees = new ArrayList<>();
     }
 
@@ -28,11 +28,11 @@ public class Department {
         this.employees = employees;
     }
 
-    public long getID() {
+    public long getDepartmentID() {
         return departmentID;
     }
 
-    public void setID(long ID) {
+    public void setDepartmentID(long ID) {
         this.departmentID = ID;
     }
 
