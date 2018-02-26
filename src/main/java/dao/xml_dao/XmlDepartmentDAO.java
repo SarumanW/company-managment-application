@@ -21,7 +21,7 @@ public class XmlDepartmentDAO implements DepartmentDAO {
     private Department extractDepartmentFromXML(Element element){
         Department department = new Department();
         department.setName(element.getElementsByTagName("Name").item(0).getTextContent());
-        System.out.println("created");
+        department.setDepartmentID(Long.parseLong(element.getElementsByTagName("DepartmentID").item(0).getTextContent()));
         Node node = element.getElementsByTagName("Employees").item(0);
         NodeList nodeList = node.getChildNodes();
         List<Long> employees = new ArrayList<>();
@@ -31,7 +31,6 @@ public class XmlDepartmentDAO implements DepartmentDAO {
             if(employeeID.getTextContent().replaceAll("\\n", "").
                     replaceAll("\\s", "").isEmpty())
                 continue;
-            System.out.println("- " + employeeID.getTextContent());
             employees.add(Long.parseLong(employeeID.getTextContent().replaceAll("\\s", "")));
         }
         department.setEmployees(employees);
@@ -98,10 +97,15 @@ public class XmlDepartmentDAO implements DepartmentDAO {
                     equals(String.valueOf(department.getDepartmentID()))){
 
                 element.getElementsByTagName("Name").item(0).setTextContent(department.getName());
-                Element employeesEl = (Element) element.getElementsByTagName("Employees");
-                NodeList empList = employeesEl.getElementsByTagName("EmployeeID");
+                Node employeesEl = element.getElementsByTagName("Employees").item(0);
+                NodeList empList = employeesEl.getChildNodes();
 
                 for(int k = 0; k<empList.getLength(); k++){
+                    Node employeeID = empList.item(k);
+                    if(employeeID.getTextContent().replaceAll("\\n", "").
+                            replaceAll("\\s", "").isEmpty())
+                        continue;
+                    System.out.println(empList.item(k).getTextContent().replaceAll("\\s", ""));
                     employeesEl.removeChild(empList.item(k));
                 }
 

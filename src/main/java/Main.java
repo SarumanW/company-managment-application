@@ -26,8 +26,8 @@ public class Main {
         daoFactory = new XmlDAOFactory();
         DepartmentDAO departmentDAO = daoFactory.getDepartmentDAO();
 
-        Department department = departmentDAO.findDepartment(1519683452);
-        System.out.println(department);
+
+        departmentDAO.deleteDepartment(1519683452);
 
     }
 }
