@@ -37,25 +37,6 @@ public class DomHelper {
         return document;
     }
 
-    public static String getXMLContent(Document document){
-        String result = "";
-        try{
-            TransformerFactory tff = TransformerFactory.newInstance();
-            Transformer tf = tff.newTransformer();
-            tf.setOutputProperty(OutputKeys.INDENT, "yes");
-            StringWriter sw = new StringWriter();
-            StreamResult sr = new StreamResult(sw);
-            DOMSource domSource = new DOMSource(document);
-            tf.transform(domSource, sr);
-            result = sw.toString();
-        } catch (TransformerConfigurationException e) {
-            e.printStackTrace();
-        } catch (TransformerException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
     public static void saveXMLContent(Document document, String filePath){
         try{
             TransformerFactory tff = TransformerFactory.newInstance();

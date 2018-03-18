@@ -22,6 +22,7 @@ public class XmlDepartmentDAO implements DepartmentDAO {
         Department department = new Department();
         department.setName(element.getElementsByTagName("Name").item(0).getTextContent());
         department.setDepartmentID(Long.parseLong(element.getElementsByTagName("DepartmentID").item(0).getTextContent()));
+
         Node node = element.getElementsByTagName("Employees").item(0);
         NodeList nodeList = node.getChildNodes();
         List<Long> employees = new ArrayList<>();
@@ -33,6 +34,7 @@ public class XmlDepartmentDAO implements DepartmentDAO {
                 continue;
             employees.add(Long.parseLong(employeeID.getTextContent().replaceAll("\\s", "")));
         }
+
         department.setEmployees(employees);
         return department;
     }
@@ -44,6 +46,7 @@ public class XmlDepartmentDAO implements DepartmentDAO {
 
         Element departments = document.getDocumentElement();
         Element departmentElement = document.createElement(Department.class.getSimpleName());
+
         for(Map.Entry<String, Method> entry : methodMap.entrySet()){
             try {
                 Element element = document.createElement(entry.getKey());
@@ -93,10 +96,12 @@ public class XmlDepartmentDAO implements DepartmentDAO {
 
         for(int i = 0; i<nodeList.getLength(); i++){
             Element element = (Element) nodeList.item(i);
+
             if(element.getElementsByTagName("DepartmentID").item(0).getTextContent().
                     equals(String.valueOf(department.getDepartmentID()))){
 
                 element.getElementsByTagName("Name").item(0).setTextContent(department.getName());
+
                 Node employeesEl = element.getElementsByTagName("Employees").item(0);
                 NodeList empList = employeesEl.getChildNodes();
 

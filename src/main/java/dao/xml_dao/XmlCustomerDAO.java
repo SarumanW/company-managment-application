@@ -16,6 +16,7 @@ public class XmlCustomerDAO implements CustomerDAO {
 
     private Customer extractCustomerFromXML(Element element){
         Customer customer = new Customer();
+        customer.setCustomerID(Long.parseLong(element.getElementsByTagName("CustomerID").item(0).getTextContent()));
         customer.setName(element.getElementsByTagName("Name").item(0).getTextContent());
         customer.setSurname(element.getElementsByTagName("Surname").item(0).getTextContent());
         customer.setProject(Long.parseLong(element.getElementsByTagName("ProjectID").item(0).getTextContent()));

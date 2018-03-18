@@ -17,17 +17,14 @@ import java.util.*;
 public class Main {
 
     public static void main(String[] args) throws SQLException, ParseException {
-        DAOFactory daoFactory = new JsonDAOFactory();
-        ProjectDAO projectDAO = daoFactory.getProjectDAO();
-
-//        Project project = new Project(new GregorianCalendar(2020, Calendar.MAY, 13), "Project1");
-//        projectDAO.insertProject(project);
+        DAOFactory daoFactory;
 
         daoFactory = new XmlDAOFactory();
-        DepartmentDAO departmentDAO = daoFactory.getDepartmentDAO();
+        EmployeeDAO employeeDAO = daoFactory.getEmployeeDAO();
 
 
-        departmentDAO.deleteDepartment(1519683452);
+        Employee employee = employeeDAO.findEmployee(1522159563);
+        System.out.println(employee);
 
     }
 }

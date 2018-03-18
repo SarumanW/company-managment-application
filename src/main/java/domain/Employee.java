@@ -14,7 +14,7 @@ public class Employee {
     private List<Long> taskList;
 
     public Employee(){
-        this.setID(UniqueID.generateID(this));
+        this.setEmployeeID(UniqueID.generateID(this));
         taskList = new ArrayList<>();
     }
 
@@ -23,15 +23,15 @@ public class Employee {
         this.setName(name);
         this.setSurname(surname);
         this.setSalary(salary);
-        this.setDepartment(department.getDepartmentID());
-        department.getEmployees().add(this.getID());
+        this.setDepartmentID(department.getDepartmentID());
+        department.getEmployees().add(this.getEmployeeID());
     }
 
-    public long getDepartment() {
+    public long getDepartmentID() {
         return departmentID;
     }
 
-    public void setDepartment(long departmentID) {
+    public void setDepartmentID(long departmentID) {
         this.departmentID = departmentID;
     }
 
@@ -51,11 +51,11 @@ public class Employee {
         this.surname = surname;
     }
 
-    public long getID() {
+    public long getEmployeeID() {
         return employeeID;
     }
 
-    public void setID(long ID) {
+    public void setEmployeeID(long ID) {
         this.employeeID = ID;
     }
 

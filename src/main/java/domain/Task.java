@@ -21,7 +21,7 @@ public class Task {
         this();
         this.name = name;
         this.estimate = estimate;
-        this.employees.add(employee.getID());
+        this.employees.add(employee.getEmployeeID());
         employee.getTaskList().add(this.getTaskID());
         this.sprintID = sprint.getSprintID();
         sprint.getTaskList().add(this.getTaskID());
@@ -60,7 +60,7 @@ public class Task {
     }
 
     public void addEmployee(Employee employee){
-        this.employees.add(employee.getID());
+        this.employees.add(employee.getEmployeeID());
         employee.addTask(this);
     }
 

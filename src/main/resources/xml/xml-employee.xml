@@ -1,2 +1,57 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<employees></employees>
+<employees>
+            
+    
+    
+    <Employee>
+                        
+        
+        <Salary>4000.0</Salary>
+                        
+        
+        <TaskList/>
+                        
+        
+        <DepartmentID>1523270839</DepartmentID>
+                        
+        
+        <EmployeeID>1522159404</EmployeeID>
+                        
+        
+        <Surname>surname1</Surname>
+                        
+        
+        <Name>name1</Name>
+                    
+    
+    </Employee>
+        
+    
+    <Employee>
+                
+        <Salary>5000.0</Salary>
+                
+        <TaskList/>
+                
+        <DepartmentID>1523270895</DepartmentID>
+                
+        <EmployeeID>1522159460</EmployeeID>
+                
+        <Surname>surname2</Surname>
+                
+        <Name>name2</Name>
+            
+    </Employee>
+    
+    <Employee>
+        <Salary>6000.0</Salary>
+        <TaskList>
+            <TaskID>1522115576</TaskID>
+            <TaskID>1522746759</TaskID>
+        </TaskList>
+        <DepartmentID>1523270998</DepartmentID>
+        <EmployeeID>1522159563</EmployeeID>
+        <Surname>surname3</Surname>
+        <Name>name3</Name>
+    </Employee>
+</employees>

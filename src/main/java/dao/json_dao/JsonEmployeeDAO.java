@@ -18,11 +18,11 @@ public class JsonEmployeeDAO implements EmployeeDAO {
 
     private Employee parseJson(JSONObject jsonObject){
         Employee employee = new Employee();
-        employee.setID(jsonObject.getLong("employeeID"));
+        employee.setEmployeeID(jsonObject.getLong("employeeID"));
         employee.setName(jsonObject.getString("name"));
         employee.setSurname(jsonObject.getString("surname"));
         employee.setSalary(jsonObject.getDouble("salary"));
-        employee.setDepartment(jsonObject.getLong("departmentID"));
+        employee.setDepartmentID(jsonObject.getLong("departmentID"));
         List<Long> taskList = new ArrayList<>();
         for(Object taskId : jsonObject.getJSONArray("taskList")){
             taskList.add(Long.parseLong(taskId.toString()));
@@ -61,8 +61,8 @@ public class JsonEmployeeDAO implements EmployeeDAO {
 
     @Override
     public boolean updateEmployee(Employee employee) {
-        SingletonCache.getInstance().put(employee.getID(), employee);
-        deleteEmployee(employee.getID());
+        SingletonCache.getInstance().put(employee.getEmployeeID(), employee);
+        deleteEmployee(employee.getEmployeeID());
         insertEmployee(employee);
         return true;
     }
