@@ -1,2 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<managers></managers>
+<managers>
+    <Manager>
+        <Salary>5000.0</Salary>
+        <ProjectList/>
+        <Surname>surname1</Surname>
+        <ManagerID>1521426536</ManagerID>
+        <Name>name1</Name>
+    </Manager>
+</managers>

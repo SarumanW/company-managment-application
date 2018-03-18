@@ -43,22 +43,22 @@ public class OracleManagerDAO implements ManagerDAO {
             PreparedStatement addSalary = connection.prepareStatement("insert into PARAMS (text_value, number_value, object_id, attribute_id) values (NULL, ?, ?, 109)");
             PreparedStatement addProjectLink = connection.prepareStatement("insert into LINKS (link_id, parent_id, child_id, link_type_id) values (?, ?, ?, 151)");
 
-            addObject.setLong(1, manager.getID());
+            addObject.setLong(1, manager.getManagerID());
             addObject.setString(2, manager.getSurname());
 
             addName.setString(1, manager.getName());
-            addName.setLong(2, manager.getID());
+            addName.setLong(2, manager.getManagerID());
 
             addSurname.setString(1, manager.getSurname());
-            addSurname.setLong(2, manager.getID());
+            addSurname.setLong(2, manager.getManagerID());
 
             addSalary.setDouble(1,manager.getSalary());
-            addSalary.setLong(2, manager.getID());
+            addSalary.setLong(2, manager.getManagerID());
 
             if(manager.getProjectList().size() != 0){
                 for(long project : manager.getProjectList()){
                     addProjectLink.setLong(1, UniqueID.generateID(new Object()));
-                    addProjectLink.setLong(2, manager.getID());
+                    addProjectLink.setLong(2, manager.getManagerID());
                     addProjectLink.setLong(3, project);
                     addProjectLink.executeUpdate();
                 }
@@ -110,7 +110,7 @@ public class OracleManagerDAO implements ManagerDAO {
                     "    AND M.OBJECT_ID = " + key);
 
             manager = extractManagerFromResultSet(resultSet);
-            manager.setID(key);
+            manager.setManagerID(key);
 
             while(projectSet.next())
                 projects.add(projectSet.getLong(1));
@@ -135,20 +135,20 @@ public class OracleManagerDAO implements ManagerDAO {
             PreparedStatement updateProject = connection.prepareStatement("update links set parent_id = ? where child_id = ? and link_type_id = 151");
 
             updateName.setString(1, manager.getName());
-            updateName.setLong(2, manager.getID());
+            updateName.setLong(2, manager.getManagerID());
 
             updateSurname.setString(1, manager.getSurname());
-            updateSurname.setLong(2, manager.getID());
+            updateSurname.setLong(2, manager.getManagerID());
 
             updateSalary.setDouble(1, manager.getSalary());
-            updateSalary.setLong(2, manager.getID());
+            updateSalary.setLong(2, manager.getManagerID());
 
             int i = updateName.executeUpdate();
             int j = updateSurname.executeUpdate();
             int z = updateSalary.executeUpdate();
 
             for(Long projectID : manager.getProjectList()){
-                updateProject.setLong(1, manager.getID());
+                updateProject.setLong(1, manager.getManagerID());
                 updateProject.setLong(2, projectID);
                 updateProject.executeUpdate();
             }

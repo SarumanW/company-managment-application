@@ -19,7 +19,7 @@ public class JsonManagerDAO implements ManagerDAO {
     private Manager parseJson(JSONObject jsonObject){
         Manager manager = new Manager();
 
-        manager.setID(jsonObject.getLong("managerID"));
+        manager.setManagerID(jsonObject.getLong("managerID"));
         manager.setName(jsonObject.getString("name"));
         manager.setSurname(jsonObject.getString("surname"));
         manager.setSalary(jsonObject.getDouble("salary"));
@@ -63,8 +63,8 @@ public class JsonManagerDAO implements ManagerDAO {
 
     @Override
     public boolean updateManager(Manager manager) {
-        SingletonCache.getInstance().put(manager.getID(), manager);
-        deleteManager(manager.getID());
+        SingletonCache.getInstance().put(manager.getManagerID(), manager);
+        deleteManager(manager.getManagerID());
         insertManager(manager);
         return true;
     }

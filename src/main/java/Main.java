@@ -20,11 +20,10 @@ public class Main {
         DAOFactory daoFactory;
 
         daoFactory = new XmlDAOFactory();
-        EmployeeDAO employeeDAO = daoFactory.getEmployeeDAO();
+        ManagerDAO managerDAO = daoFactory.getManagerDAO();
 
-
-        Employee employee = employeeDAO.findEmployee(1522159563);
-        System.out.println(employee);
+        Manager manager = managerDAO.findManager(1521426536);
+        System.out.println(manager);
 
     }
 }

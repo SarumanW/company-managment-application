@@ -13,7 +13,7 @@ public class Manager {
     private List<Long> projectList;
 
     public Manager(){
-        this.setID(UniqueID.generateID(this));
+        this.setManagerID(UniqueID.generateID(this));
         projectList = new ArrayList<>();
     }
 
@@ -24,11 +24,11 @@ public class Manager {
         this.setSalary(salary);
     }
 
-    public long getID() {
+    public long getManagerID() {
         return managerID;
     }
 
-    public void setID(long ID) {
+    public void setManagerID(long ID) {
         this.managerID = ID;
     }
 
@@ -67,10 +67,11 @@ public class Manager {
     @Override
     public String toString() {
         return "Manager{" +
-                "ID=" + managerID +
+                "managerID=" + managerID +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", salary=" + salary +
+                ", projectList=" + projectList +
                 '}';
     }
 }

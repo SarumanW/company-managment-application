@@ -20,6 +20,7 @@ public class XmlEmployeeDAO implements EmployeeDAO {
 
     private Employee extractEmployeeFromXML(Element element){
         Employee employee = new Employee();
+        employee.setEmployeeID(Long.parseLong(element.getElementsByTagName("EmployeeID").item(0).getTextContent()));
         employee.setName(element.getElementsByTagName("Name").item(0).getTextContent());
         employee.setSurname(element.getElementsByTagName("Surname").item(0).getTextContent());
         employee.setDepartmentID(Long.parseLong(element.getElementsByTagName("DepartmentID").item(0).getTextContent()));
