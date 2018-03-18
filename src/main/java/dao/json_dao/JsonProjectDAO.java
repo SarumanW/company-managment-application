@@ -30,7 +30,7 @@ public class JsonProjectDAO implements ProjectDAO {
         for(Object sprintId : jsonObject.getJSONArray("sprintList")){
             sprintList.add(Long.parseLong(sprintId.toString()));
         }
-        project.setSprints(sprintList);
+        project.setSprintList(sprintList);
         try {
             project.setStart(formatter.parse(jsonObject.getString("start")));
             project.setEnd(formatter.parse(jsonObject.getString("end")));

@@ -20,10 +20,10 @@ public class Main {
         DAOFactory daoFactory;
 
         daoFactory = new XmlDAOFactory();
-        ManagerDAO managerDAO = daoFactory.getManagerDAO();
+        ProjectDAO projectDAO = daoFactory.getProjectDAO();
 
-        Manager manager = managerDAO.findManager(1521426536);
-        System.out.println(manager);
+        Project project = new Project(new GregorianCalendar(2020, Calendar.AUGUST, 24), "project2");
+        projectDAO.insertProject(project);
 
     }
 }

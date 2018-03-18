@@ -67,8 +67,8 @@ public class OracleProjectDAO implements ProjectDAO {
             addCustomerLink.setLong(2, project.getCustomerID());
             addCustomerLink.setLong(3, project.getProjectID());
 
-            if(project.getSprints().size() != 0){
-                for(long sprint : project.getSprints()){
+            if(project.getSprintList().size() != 0){
+                for(long sprint : project.getSprintList()){
                     addSprintLink.setLong(1, UniqueID.generateID(new Object()));
                     addSprintLink.setLong(2, project.getProjectID());
                     addSprintLink.setLong(3, sprint);
@@ -156,7 +156,7 @@ public class OracleProjectDAO implements ProjectDAO {
             while(sprintSet.next())
                 sprints.add(sprintSet.getLong(1));
 
-            project.setSprints(sprints);
+            project.setSprintList(sprints);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -199,7 +199,7 @@ public class OracleProjectDAO implements ProjectDAO {
             int s = updateManager.executeUpdate();
             int l = updateCustomer.executeUpdate();
 
-            for(Long sprintID : project.getSprints()){
+            for(Long sprintID : project.getSprintList()){
                 updateSprint.setLong(1, project.getProjectID());
                 updateSprint.setLong(2, sprintID);
                 updateSprint.executeUpdate();

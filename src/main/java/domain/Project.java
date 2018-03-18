@@ -88,11 +88,11 @@ public class Project {
         this.name = name;
     }
 
-    public List<Long> getSprints() {
+    public List<Long> getSprintList() {
         return sprintList;
     }
 
-    public void setSprints(List<Long> sprintList) {
+    public void setSprintList(List<Long> sprintList) {
         this.sprintList = sprintList;
     }
 
