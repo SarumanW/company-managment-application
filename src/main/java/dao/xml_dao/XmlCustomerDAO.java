@@ -20,6 +20,7 @@ public class XmlCustomerDAO implements CustomerDAO {
         customer.setName(element.getElementsByTagName("Name").item(0).getTextContent());
         customer.setSurname(element.getElementsByTagName("Surname").item(0).getTextContent());
         customer.setProject(Long.parseLong(element.getElementsByTagName("ProjectID").item(0).getTextContent()));
+
         return customer;
     }
 
@@ -30,6 +31,7 @@ public class XmlCustomerDAO implements CustomerDAO {
 
         Element customers = document.getDocumentElement();
         Element customerElement = document.createElement(Customer.class.getSimpleName());
+
         for(Map.Entry<String, Method> entry : methodMap.entrySet()){
             try {
                 Element element = document.createElement(entry.getKey());

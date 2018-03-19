@@ -110,7 +110,8 @@ public class XmlDepartmentDAO implements DepartmentDAO {
                     if(employeeID.getTextContent().replaceAll("\\n", "").
                             replaceAll("\\s", "").isEmpty())
                         continue;
-                    System.out.println(empList.item(k).getTextContent().replaceAll("\\s", ""));
+
+                    empList.item(k).getTextContent().replaceAll("\\s", "");
                     employeesEl.removeChild(empList.item(k));
                 }
 

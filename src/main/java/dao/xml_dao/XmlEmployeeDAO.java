@@ -119,7 +119,7 @@ public class XmlEmployeeDAO implements EmployeeDAO {
                             replaceAll("\\s", "").isEmpty())
                         continue;
 
-                    System.out.println(taskList.item(k).getTextContent().replaceAll("\\s", ""));
+                    taskList.item(k).getTextContent().replaceAll("\\s", "");
                     taskEl.removeChild(taskList.item(k));
                 }
 

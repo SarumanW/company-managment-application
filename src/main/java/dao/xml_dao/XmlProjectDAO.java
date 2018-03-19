@@ -133,7 +133,7 @@ public class XmlProjectDAO implements ProjectDAO {
                             replaceAll("\\s", "").isEmpty())
                         continue;
 
-                    System.out.println(sprintList.item(k).getTextContent().replaceAll("\\s", ""));
+                    sprintList.item(k).getTextContent().replaceAll("\\s", "");
                     sprintEl.removeChild(sprintList.item(k));
                 }
 
