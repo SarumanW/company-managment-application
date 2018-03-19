@@ -20,10 +20,9 @@ public class Main {
         DAOFactory daoFactory;
 
         daoFactory = new XmlDAOFactory();
-        ProjectDAO projectDAO = daoFactory.getProjectDAO();
+        SprintDAO sprintDAO = daoFactory.getSprintDAO();
 
-        Project project = new Project(new GregorianCalendar(2020, Calendar.AUGUST, 24), "project2");
-        projectDAO.insertProject(project);
+
 
     }
 }

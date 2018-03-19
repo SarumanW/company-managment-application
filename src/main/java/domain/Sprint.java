@@ -22,6 +22,12 @@ public class Sprint {
         this.projectID = project.getProjectID();
     }
 
+    public Sprint(String name, long projectID){
+        this();
+        this.name = name;
+        this.projectID = projectID;
+    }
+
     public long getSprintID() {
         return sprintID;
     }

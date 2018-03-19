@@ -31,7 +31,7 @@ public class XmlDAOFactory extends DAOFactory {
 
     @Override
     public SprintDAO getSprintDAO() {
-        return null;
+        return new XmlSprintDAO();
     }
 
     @Override

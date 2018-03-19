@@ -89,6 +89,7 @@ public class XmlManagerDAO implements ManagerDAO {
                 manager = extractManagerFromXML(element);
             }
         }
+
         return manager;
     }
 
