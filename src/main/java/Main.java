@@ -20,9 +20,10 @@ public class Main {
         DAOFactory daoFactory;
 
         daoFactory = new XmlDAOFactory();
-        SprintDAO sprintDAO = daoFactory.getSprintDAO();
+        TaskDAO taskDAO = daoFactory.getTaskDAO();
 
-
+        Task task = new Task("task1", 1000, new Employee(), new Sprint());
+        taskDAO.insertTask(task);
 
     }
 }

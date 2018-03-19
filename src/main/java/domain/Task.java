@@ -10,18 +10,18 @@ public class Task {
     private String name;
     private long estimate;
     private long sprintID;
-    private List<Long> employees;
+    private List<Long> employeeList;
 
     public Task(){
         this.setTaskID(UniqueID.generateID(this));
-        employees = new ArrayList<>();
+        employeeList = new ArrayList<>();
     }
 
     public Task(String name, long estimate, Employee employee, Sprint sprint){
         this();
         this.name = name;
         this.estimate = estimate;
-        this.employees.add(employee.getEmployeeID());
+        this.employeeList.add(employee.getEmployeeID());
         employee.getTaskList().add(this.getTaskID());
         this.sprintID = sprint.getSprintID();
         sprint.getTaskList().add(this.getTaskID());
@@ -51,24 +51,24 @@ public class Task {
         this.estimate = estimate;
     }
 
-    public List<Long> getEmployees() {
-        return employees;
+    public List<Long> getEmployeeList() {
+        return employeeList;
     }
 
-    public void setEmployees(List<Long> employees) {
-        this.employees = employees;
+    public void setEmployeeList(List<Long> employeeList) {
+        this.employeeList = employeeList;
     }
 
     public void addEmployee(Employee employee){
-        this.employees.add(employee.getEmployeeID());
+        this.employeeList.add(employee.getEmployeeID());
         employee.addTask(this);
     }
 
-    public long getSprint() {
+    public long getSprintID() {
         return sprintID;
     }
 
-    public void setSprint(long sprint) {
+    public void setSprintID(long sprint) {
         this.sprintID = sprint;
     }
 
@@ -78,7 +78,7 @@ public class Task {
                 "taskID=" + taskID +
                 ", name='" + name + '\'' +
                 ", estimate=" + estimate +
-                ", employees=" + employees +
+                ", employeeList=" + employeeList +
                 '}';
     }
 }

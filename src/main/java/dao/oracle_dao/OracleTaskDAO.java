@@ -55,15 +55,15 @@ public class OracleTaskDAO implements TaskDAO {
             addEstimate.setLong(2, task.getTaskID());
 
             addLinkSpr.setLong(1, UniqueID.generateID(new Object()));
-            addLinkSpr.setLong(2, task.getSprint());
+            addLinkSpr.setLong(2, task.getSprintID());
             addLinkSpr.setLong(3, task.getTaskID());
 
             int i = addObject.executeUpdate();
             int j = addName.executeUpdate();
             int k = addLinkSpr.executeUpdate();
 
-            if(task.getEmployees().size() != 0){
-                for(Long employee : task.getEmployees()){
+            if(task.getEmployeeList().size() != 0){
+                for(Long employee : task.getEmployeeList()){
                     addLinkEmp.setLong(1, UniqueID.generateID(new Object()));
                     addLinkEmp.setLong(2, employee);
                     addLinkEmp.setLong(3, task.getTaskID());
@@ -126,12 +126,12 @@ public class OracleTaskDAO implements TaskDAO {
             task = extractTaskFromResultSet(resultSet);
             task.setTaskID(key);
             sprintSet.next();
-            task.setSprint(sprintSet.getLong(1));
+            task.setSprintID(sprintSet.getLong(1));
 
             while(employSet.next())
                 employees.add(employSet.getLong(1));
 
-            task.setEmployees(employees);
+            task.setEmployeeList(employees);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -157,14 +157,14 @@ public class OracleTaskDAO implements TaskDAO {
             updateEstimate.setLong(1, task.getEstimate());
             updateEstimate.setLong(2, task.getTaskID());
 
-            updateSprint.setLong(1, task.getSprint());
+            updateSprint.setLong(1, task.getSprintID());
             updateSprint.setLong(2, task.getTaskID());
 
             int i = updateName.executeUpdate();
             int j = updateEstimate.executeUpdate();
             int k = updateSprint.executeUpdate();
 
-            for(Long employeeID : task.getEmployees()){
+            for(Long employeeID : task.getEmployeeList()){
                 updateEmployee.setLong(1, employeeID);
                 updateEmployee.setLong(2, task.getTaskID());
                 updateEmployee.executeUpdate();

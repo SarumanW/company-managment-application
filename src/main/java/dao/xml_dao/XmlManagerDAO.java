@@ -117,7 +117,7 @@ public class XmlManagerDAO implements ManagerDAO {
                             replaceAll("\\s", "").isEmpty())
                         continue;
 
-                    System.out.println(projectList.item(k).getTextContent().replaceAll("\\s", ""));
+                    projectList.item(k).getTextContent().replaceAll("\\s", "");
                     projectEl.removeChild(projectList.item(k));
                 }
 

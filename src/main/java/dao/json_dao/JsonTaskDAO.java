@@ -21,13 +21,13 @@ public class JsonTaskDAO implements TaskDAO {
 
         task.setTaskID(jsonObject.getLong("taskID"));
         task.setName(jsonObject.getString("name"));
-        task.setSprint(jsonObject.getLong("sprintID"));
+        task.setSprintID(jsonObject.getLong("sprintID"));
         task.setEstimate(jsonObject.getLong("estimate"));
         List<Long> employees= new ArrayList<>();
         for(Object employeeId : jsonObject.getJSONArray("employees")){
             employees.add(Long.parseLong(employeeId.toString()));
         }
-        task.setEmployees(employees);
+        task.setEmployeeList(employees);
 
         return task;
     }
